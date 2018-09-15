@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "KNN_And_Decision_Tree", "PythonApp1\KNN_And_Decision_Tree.pyproj", "{D7B00C5B-A99C-44B3-92E3-976FC502BACE}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "BFS_Graph", "PythonApp0\BFS_Graph.pyproj", "{E401F96D-3694-499C-B187-0B31A5A62BD7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D7B00C5B-A99C-44B3-92E3-976FC502BACE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D7B00C5B-A99C-44B3-92E3-976FC502BACE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E401F96D-3694-499C-B187-0B31A5A62BD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E401F96D-3694-499C-B187-0B31A5A62BD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

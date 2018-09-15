@@ -23,10 +23,29 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DecisionTree\CART.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DecisionTree\ID3.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DecisionTree\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="HW1.py" />
+    <Compile Include="KNearestNeighbor\KNN.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="KNearestNeighbor\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|2.7" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DecisionTree\" />
+    <Folder Include="KNearestNeighbor\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

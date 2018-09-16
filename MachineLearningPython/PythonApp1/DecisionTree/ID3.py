@@ -1,4 +1,6 @@
-from collections import namedtuple 
+import math
+import numpy
+from collections import namedtuple
 
 class DecisionTree_ID3(object):
 
@@ -7,35 +9,35 @@ class DecisionTree_ID3(object):
 	PartitionDataTuple = namedtuple('PartitionDataTuple', ['true_rows', 'false_rows'])
 	BestQuestionInfoTuple = namedtuple('BestQuestionInfoTuple', ['question', 'gain'])
 
-	class Feature_Question:
-		"""A Feature_Question is used to partition a dataset.
+	class Split_Question:
+		"""A Split_Question is used to partition a dataset.
 		This object holds the feature label and its value
 		"""
 
-		def __init__(self, column_label, value):
-			assert(isinstance(column_label, str))
+		def __init__(self, feature_label, value):
+			assert(isinstance(feature_label, str))
 			assert(isinstance(value, float))
-			self.column_label = column_label
+			self.feature_label = feature_label
 			self.value = value
 
 		def answer(self, datapoint):
 			# Compare the feature value in a given datapoint to the
 			# feature value in this question and reply with true or false
-			val = datapoint[self.column_label]
+			val = datapoint[self.feature_label]
 			# Assuming all the values are numeric
 			return val >= self.value
 
 		def __repr__(self):
-			return "(%s >= %s?)" % (self.column_label, str(self.value))
+			return "(%s >= %s?)" % (self.feature_label, str(self.value))
 
 
 	class Leaf_Node:
 		"""A Leaf node does classification book keeping on the rows that 
-		reach it
+		reach it. Ideally, all the rows (examples) in it have the same label
 		"""
 
 		def __init__(self, rows, classification_label):
-			self.predictions = IBL_DecisionTree_Classifier.create_class_count_dict(rows, classification_label)
+			self.predictions = DecisionTree_ID3.create_count_dict(rows, classification_label)
 
 		def __repr__(self):
 			"""Print the predictions at a leaf as a dictionary format."""
@@ -62,19 +64,15 @@ class DecisionTree_ID3(object):
 		self.classification_label = None
 		self.feature_labels = None
 
-	def __feature_unique_values(self, rows, feature):
-		"""Find the unique values for a column in a dataset."""
-
-		return set([row[feature] for row in rows])
 
 	@staticmethod
-	def create_class_count_dict(rows, classification_label):
+	def create_count_dict(rows, column):
 		"""Counts the number of each type of label.
 		"""
 
 		counts = {}  
 		for row in rows:
-			label = row[classification_label]
+			label = row[column]
 			if label not in counts:
 				counts[label] = 0
 			counts[label] += 1
@@ -84,7 +82,7 @@ class DecisionTree_ID3(object):
 		"""Partitions a dataset based on question
 		"""
 		assert(isinstance(rows, list))
-		assert(isinstance(question, self.Feature_Question))
+		assert(isinstance(question, self.Split_Question))
 		partition_tuple = self.PartitionDataTuple(true_rows = [], false_rows = [])
 
 		for row in rows:
@@ -95,63 +93,76 @@ class DecisionTree_ID3(object):
 				partition_tuple.false_rows.append(row)
 		return partition_tuple
 
-	def __gini(self, rows):
-		"""Calculate the Gini Impurity for a list of rows.
-
-		There are a few different ways to do this, I thought this one was
-		the most concise. See:
-		https://en.wikipedia.org/wiki/Decision_tree_learning#Gini_impurity
+	def __entropy(self, rows):
+		"""Calculates current entropy of the set of examples
 		"""
-		counts = self.create_class_count_dict(rows, self.classification_label)
-		impurity = 1
-		for lbl in counts:
-			prob_of_lbl = counts[lbl] / float(len(rows))
-			impurity -= prob_of_lbl**2
-		return impurity
+		counts_dict = self.create_count_dict(rows, self.classification_label)
 
-	def __info_gain(self, left_rows, right_rows, current_uncertainty):
+		dataEntropy = 0.0
+		for key in counts_dict.keys():
+			freq = counts_dict[key]
+			p = freq/float(len(rows))
+			dataEntropy += -p * math.log(p, 2)
+		
+		return dataEntropy
+
+
+	def __expected_entropy(self, target_attribute_values_array):
+		"""Calculates expected entropy of current set of examples
+		    with respect to a certain target attribute
+		"""
+
+		dataEntropy = 0.0
+		
+		total_rows = 0
+		for target_attribute_values_set in target_attribute_values_array:
+			total_rows += len(target_attribute_values_set)
+
+		for target_attribute_values_set in target_attribute_values_array:
+			freq = len(target_attribute_values_set)
+			dataEntropy += (freq/total_rows) * self.__entropy(target_attribute_values_set)
+
+		return dataEntropy
+
+	def __info_gain(self, true_rows, false_rows, entropy):
 		"""Information Gain.
 
-	    The uncertainty of the starting node, minus the weighted impurity of
-	    two child nodes.
+	    Calculates the expected reduction of entropy caused by partitioning on
+		candidate attribute.
 	    """
-		p = float(len(left_rows)) / (len(left_rows) + len(right_rows))
-		return current_uncertainty - p * self.__gini(left_rows) - (1 - p) * self.__gini(right_rows)
+		attribute_values_array = []
+		attribute_values_array.append(true_rows)
+		attribute_values_array.append(false_rows)
+		return entropy - self.__expected_entropy(attribute_values_array)
 
-	def __find_best_question(self, rows):
+
+	def __find_best_split(self, rows, attribute_labels):
 		"""Find the best question to ask by iterating over every feature / value
 		and calculating the information gain.
 		"""
 		best_gain = 0  # keep track of the best information gain
 		best_question = None  # keep track of the feature that produced it
-		current_uncertainty = self.__gini(rows)
-		#total_features = len(self.feature_labels) - 1  # number of columns
 
-		for feature_label in self.feature_labels:
+		for feature_label in attribute_labels:
 
-			values = self.__feature_unique_values(rows, feature_label)
+			current_entropy = self.__entropy(rows)
+			assert(isinstance(feature_label, str))
+			question = self.Split_Question(feature_label, self.value_attribute_threshold[feature_label])
+			partition_tuple = self.__partition_data(rows, question)
 
-			for val in values:  # for each value
+			# Skip this split if it doesn't divide the dataset as it will not reduce the entropy
+			if len(partition_tuple.true_rows) == 0 or len(partition_tuple.false_rows) == 0:
+				continue
 
-				assert(isinstance(val, float)) # only the classification feature is an int
-				assert(isinstance(feature_label, str))
+			# Calculate the information gain from this partition
+			gain = self.__info_gain(partition_tuple.true_rows, partition_tuple.false_rows, current_entropy)
 
-				question = self.Feature_Question(feature_label, val)
-
-				partition_tuple = self.__partition_data(rows, question)
-
-				# Skip this split if it doesn't divide the dataset.
-				if len(partition_tuple.true_rows) == 0 or len(partition_tuple.false_rows) == 0:
-					continue
-
-				# Calculate the information gain from this partition
-				gain = self.__info_gain(partition_tuple.true_rows, partition_tuple.false_rows, current_uncertainty)
-
-				if gain > best_gain:
-					best_gain = gain
-					best_question = question
+			if gain > best_gain:
+				best_gain = gain
+				best_question = question
 
 		return self.BestQuestionInfoTuple(best_question, best_gain)
+
 
 	def build(self, dataset, classification_label):
 		"""Meant to be the external facing build function"""
@@ -159,15 +170,25 @@ class DecisionTree_ID3(object):
 		self.classification_label = classification_label
 		self.feature_labels = dataset[0].keys()
 		self.feature_labels.remove(self.classification_label)
-		self.root_node = self.__build_tree(dataset)
 
-	def __build_tree(self, rows):
+		# build the thresholds once
+		self.value_attribute_threshold = {}
+		for attribute in self.feature_labels:
+			temp_set = []
+			for row in dataset:
+				temp_set.append(row[attribute])
+			numpy_array = numpy.array(temp_set)
+			self.value_attribute_threshold[attribute] = numpy.mean(numpy_array)
+
+		self.root_node = self.__build_tree(dataset, self.feature_labels[:])
+
+	def __build_tree(self, rows, feature_labels):
 		"""Builds the tree using recursion. Base case is no further
 		information gain.
 		"""
 
 		# best information gain is associated with asking the most appropiate question
-		best_question_info_tuple = self.__find_best_question(rows)
+		best_question_info_tuple = self.__find_best_split(rows, feature_labels[:])
 
 		# no further info gain so base case reached
 		if best_question_info_tuple.gain == 0:
@@ -176,11 +197,14 @@ class DecisionTree_ID3(object):
 		# partition data using best question
 		partition_tuple = self.__partition_data(rows, best_question_info_tuple.question)
 
+		# remove this feature from the feature list since it has been used to split
+		feature_labels.remove(best_question_info_tuple.question.feature_label)
+
 		# true branch recursion Depth First style.
-		true_branch = self.__build_tree(partition_tuple.true_rows)
+		true_branch = self.__build_tree(partition_tuple.true_rows, feature_labels[:]) # note the pass by value instead of pass by reference, very important
 
 		# false branch recursion Depth First style.
-		false_branch = self.__build_tree(partition_tuple.false_rows)
+		false_branch = self.__build_tree(partition_tuple.false_rows, feature_labels[:]) # note the pass by value instead of pass by reference, very important
 
 		# decision node will hold the best question to ask at this point
 		# as well as it will hold the two branches

@@ -4,7 +4,7 @@ import csv
 import sys
 
 from KNearestNeighbor.KNN import KNN_Classifier
-from DecisionTree.CART import DecisionTree_CART
+from DecisionTree.ID3 import DecisionTree_ID3
 
 class DataSet(object):
 	def __init__(self):
@@ -101,11 +101,11 @@ def main():
 
 	## k_FoldValidation(4, classifier, data, data.classification_label, ["citric acid","residual sugar","density"], True)
 
-	classifier = DecisionTree_CART()
+	classifier = DecisionTree_ID3()
 	#classifier.build(data.list_dict[:100], data.classification_label)
-	classifier.build(data.list_dict[:100], data.classification_label)
+	classifier.build(data.list_dict[20:80], data.classification_label)
 	classifier.debug_print_tree(classifier.root_node)
-	result = classifier.classify(item)
+	#result = classifier.classify(item)
 
 	return 0
 

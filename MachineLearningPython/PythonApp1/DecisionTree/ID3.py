@@ -64,6 +64,10 @@ class DecisionTree_ID3(object):
 		self.classification_label = None
 		self.feature_labels = None
 
+	def reset(self):
+		self.root_node = None
+		self.classification_label = None
+		self.feature_labels = None
 
 	@staticmethod
 	def create_count_dict(rows, column):
@@ -164,8 +168,8 @@ class DecisionTree_ID3(object):
 		return self.BestQuestionInfoTuple(best_question, best_gain)
 
 
-	def build(self, dataset, classification_label):
-		"""Meant to be the external facing build function"""
+	def train(self, dataset, classification_label):
+		"""Meant to be the external facing train function"""
 
 		self.classification_label = classification_label
 		self.feature_labels = dataset[0].keys()
@@ -231,13 +235,25 @@ class DecisionTree_ID3(object):
 	def classify(self, row):
 		"""Meant to be the public function for classifying"""
 
-		return self.__classify(row, self.root_node)
+		leaf_node = self.__classify(row, self.root_node)
+		prediction = self.__majority_vote(leaf_node)
+		return prediction
+		
+	def __majority_vote(self, leaf_node):
+
+		majority_vote = 0
+		majority_label = None
+		for label in leaf_node.predictions.keys():
+			if leaf_node.predictions[label] > majority_vote:
+				majority_label = label
+				majority_vote = leaf_node.predictions[label]
+		return majority_label
 
 	def __classify(self, row, node):
 
 		# Base case: we've reached a leaf
 		if isinstance(node, self.Leaf_Node):
-			return node.predictions
+			return node
 
 	    # Decide whether to follow the true-branch or the false-branch.
 	    # Compare the feature / value stored in the node,

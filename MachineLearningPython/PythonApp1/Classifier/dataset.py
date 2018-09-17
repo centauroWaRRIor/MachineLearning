@@ -1,7 +1,8 @@
 import csv
 import numpy
 from random import shuffle
-
+from KNN import KNN_Classifier
+from ID3 import DecisionTree_ID3
 
 class DataSet(object):
 	def __init__(self):
@@ -188,7 +189,10 @@ def k_FoldValidation(k, classifier, rows, classification_label):
 
 		# train the model
 		classifier.reset()
-		classifier.train(training_set, classification_label)
+		if isinstance(classifier, DecisionTree_ID3):
+			classifier.train(training_set, classification_label)
+		if isinstance(classifier, KNN_Classifier):
+			classifier.train(training_set, classification_label, ["citric acid","residual sugar","density"])
 
 		training_score = Classifier_Score();
 		test_score = Classifier_Score();

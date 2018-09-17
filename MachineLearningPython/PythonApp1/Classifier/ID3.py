@@ -61,9 +61,7 @@ class DecisionTree_ID3(object):
 
 
 	def __init__(self):
-		self.root_node = None
-		self.classification_label = None
-		self.feature_labels = None
+		reset()
 
 	def reset(self):
 		self.root_node = None

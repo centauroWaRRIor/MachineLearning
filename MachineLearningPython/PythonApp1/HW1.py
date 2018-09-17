@@ -1,4 +1,3 @@
-import math
 import sys
 
 from Classifier.KNN import KNN_Classifier
@@ -12,15 +11,15 @@ def main():
 	data.load("winequality-white.csv", classification_label)
 
 	# simple test
-	#classifier = KNN_Classifier()
+	classifier = KNN_Classifier()
 
-	item = data.list_dict[101]
-	item_label = item["quality"]
-	print item
+	#item = data.list_dict[101]
+	#item_label = item["quality"]
+	#print item
 	#result = classifier.classify(item, data.list_dict[:100], ["citric acid","residual sugar","density"], data.classification_label)
 	#print "result KNN", result
 
-	classifier = DecisionTree_ID3()
+	#classifier = DecisionTree_ID3()
 	#classifier.build(data.list_dict[:100], data.classification_label)
 	#classifier.build(data.list_dict[20:80], data.classification_label)
 	#classifier.debug_print_tree(classifier.root_node)
@@ -28,6 +27,7 @@ def main():
 	#print "result Decision Tree", result
 
 	k_FoldValidation(4, classifier, data.list_dict[:400], classification_label)
+	#k_FoldValidation(4, classifier, data.list_dict[:800], classification_label)
 
 	return 0
 

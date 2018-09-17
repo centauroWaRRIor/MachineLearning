@@ -61,12 +61,13 @@ class DecisionTree_ID3(object):
 
 
 	def __init__(self):
-		reset()
+		self.reset()
 
 	def reset(self):
 		self.root_node = None
 		self.classification_label = None
 		self.feature_labels = None
+		self.max_depth = 20 # default hyperparameter
 
 	@staticmethod
 	def create_count_dict(rows, column):
@@ -183,9 +184,9 @@ class DecisionTree_ID3(object):
 			numpy_array = numpy.array(temp_set)
 			self.value_attribute_threshold[attribute] = numpy.mean(numpy_array)
 
-		self.root_node = self.__build_tree(dataset, self.feature_labels[:])
+		self.root_node = self.__build_tree(dataset, self.feature_labels[:], 0)
 
-	def __build_tree(self, rows, feature_labels):
+	def __build_tree(self, rows, feature_labels, tree_depth):
 		"""Builds the tree using recursion. Base case is no further
 		information gain.
 		"""
@@ -193,8 +194,8 @@ class DecisionTree_ID3(object):
 		# best information gain is associated with asking the most appropiate question
 		best_question_info_tuple = self.__find_best_split(rows, feature_labels[:])
 
-		# no further info gain so base case reached
-		if best_question_info_tuple.gain == 0:
+		# achieving no further info gain or reaching max depth are the base case
+		if best_question_info_tuple.gain == 0 or tree_depth > self.max_depth:
 			return self.Leaf_Node(rows, self.classification_label)
 
 		# partition data using best question
@@ -204,10 +205,10 @@ class DecisionTree_ID3(object):
 		feature_labels.remove(best_question_info_tuple.question.feature_label)
 
 		# true branch recursion Depth First style.
-		true_branch = self.__build_tree(partition_tuple.true_rows, feature_labels[:]) # note the pass by value instead of pass by reference, very important
+		true_branch = self.__build_tree(partition_tuple.true_rows, feature_labels[:], tree_depth + 1) # note the pass by value instead of pass by reference, very important
 
 		# false branch recursion Depth First style.
-		false_branch = self.__build_tree(partition_tuple.false_rows, feature_labels[:]) # note the pass by value instead of pass by reference, very important
+		false_branch = self.__build_tree(partition_tuple.false_rows, feature_labels[:], tree_depth + 1) # note the pass by value instead of pass by reference, very important
 
 		# decision node will hold the best question to ask at this point
 		# as well as it will hold the two branches

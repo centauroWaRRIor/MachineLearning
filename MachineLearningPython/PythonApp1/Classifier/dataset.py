@@ -178,6 +178,8 @@ def k_FoldValidation(k, classifier, rows, classification_label):
 
 	average_f1_training_score = []
 	average_accuracy_training_score = []
+	average_f1_validation_score = []
+	average_accuracy_validation_score = []
 	average_f1_test_score = []
 	average_accuracy_test_score = []
 
@@ -186,23 +188,38 @@ def k_FoldValidation(k, classifier, rows, classification_label):
 		test_set = rows[i * fold_length:(i + 1) * fold_length]
 		# use remaining for training
 		training_set = rows[:i * fold_length] + rows[(i + 1) * fold_length:]
+		# among training set, reserve 20% for validation tuning
+		validation_set_size = 0.2 * len(training_set)
+		validation_set = training_set[:validation_set_size]
+		# resize the training set
+		training_set = training_set[validation_set_size:]
 
 		# train the model
 		classifier.reset()
 		if isinstance(classifier, DecisionTree_ID3):
+			# TODO load best hyper parameter found offline
+			classifier.max_depth = 30
 			classifier.train(training_set, classification_label)
-		if isinstance(classifier, KNN_Classifier):
+		elif isinstance(classifier, KNN_Classifier):
 			classifier.train(training_set, classification_label, ["citric acid","residual sugar","density"])
 
 		training_score = Classifier_Score();
+		validation_score = Classifier_Score();
 		test_score = Classifier_Score();
 
-		# evaluate using test set
+		# evaluate using training set
 		for item in training_set:
 			ground_truth = item[classification_label]
 			# make a prediction using this training set of data
 			prediction = classifier.classify(item)
 			training_score.record_result(ground_truth, prediction)
+
+		# evaluate using validation set
+		for item in validation_set:
+			ground_truth = item[classification_label]
+			# make a prediction using this training set of data
+			prediction = classifier.classify(item)
+			validation_score.record_result(ground_truth, prediction)
 
 		# evaluate using test set
 		for item in test_set:
@@ -217,6 +234,11 @@ def k_FoldValidation(k, classifier, rows, classification_label):
 		average_f1_training_score.append(f1_score)
 		average_accuracy_training_score.append(accuracy_score)
 		print "Training: F1 Score: %.1f , Accuracy: %.1f" % (f1_score * 100.0, accuracy_score * 100.0)
+		f1_score = validation_score.get_weighted_F1_score()
+		accuracy_score = validation_score.get_accuracy()
+		average_f1_validation_score.append(f1_score)
+		average_accuracy_validation_score.append(accuracy_score)
+		print "Validation: F1 Score: %.1f , Accuracy: %.1f" % (f1_score * 100.0, accuracy_score * 100.0)
 		f1_score = test_score.get_weighted_F1_score()
 		accuracy_score = test_score.get_accuracy()
 		average_f1_test_score.append(f1_score)
@@ -228,6 +250,54 @@ def k_FoldValidation(k, classifier, rows, classification_label):
 	f1_score = numpy.array(average_f1_training_score)
 	accuracy_score = numpy.array(average_accuracy_training_score)
 	print "Training: F1 Score: %.1f , Accuracy: %.1f" % (numpy.average(f1_score) * 100.0, numpy.average(accuracy_score) * 100.0)
+	f1_score = numpy.array(average_f1_validation_score)
+	accuracy_score = numpy.array(average_accuracy_validation_score)
+	print "Training: F1 Score: %.1f , Accuracy: %.1f" % (numpy.average(f1_score) * 100.0, numpy.average(accuracy_score) * 100.0)
 	f1_score = numpy.array(average_f1_test_score)
 	accuracy_score = numpy.array(average_accuracy_test_score)
 	print "Test: F1 Score: %.1f , Accuracy: %.1f" % (numpy.average(f1_score) * 100.0, numpy.average(accuracy_score) * 100.0)
+
+
+def k_FoldValidation_ID3_tuning(k, ID3_classifier, rows, classification_label):
+     
+	dataset_size = len(rows)
+	if k > dataset_size:
+		raise Exception("Bad k-fold argument given size of data")
+
+	# calculate length of fold
+	fold_length = int(dataset_size / k)  
+	print "Fold length: ", dataset_size, "/ ",k, " = ", fold_length
+
+	for i in range(k):
+		# use one / kth as the test set
+		test_set = rows[i * fold_length:(i + 1) * fold_length]
+		# use remaining for training
+		training_set = rows[:i * fold_length] + rows[(i + 1) * fold_length:]
+		# among training set, reserve 20% for validation tuning
+		validation_set_size = int(0.2 * len(training_set))
+		validation_set = training_set[:validation_set_size]
+		# resize the training set
+		training_set = training_set[validation_set_size:]
+
+		hyper_parameter_array = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+
+		for hyper_parameter in hyper_parameter_array:
+			# train the model
+			ID3_classifier.reset()
+			ID3_classifier.max_depth = hyper_parameter
+			ID3_classifier.train(training_set, classification_label)
+
+			validation_score = Classifier_Score();
+
+			# evaluate using validation set
+			for item in validation_set:
+				ground_truth = item[classification_label]
+				# make a prediction using this training set of data
+				prediction = ID3_classifier.classify(item)
+				validation_score.record_result(ground_truth, prediction)
+
+			print "Fold-%d:" % i
+			print "Hyper parameter max_depth = %d" % hyper_parameter
+			f1_score = validation_score.get_weighted_F1_score()
+			accuracy_score = validation_score.get_accuracy()
+			print "Validation: F1 Score: %.1f , Accuracy: %.1f" % (f1_score * 100.0, accuracy_score * 100.0)

@@ -1,5 +1,6 @@
 import csv
 import numpy
+import matplotlib.pyplot as plt
 from random import shuffle
 from KNN import KNN_Classifier
 from ID3 import DecisionTree_ID3
@@ -301,3 +302,22 @@ def k_FoldValidation_ID3_tuning(k, ID3_classifier, rows, classification_label):
 			f1_score = validation_score.get_weighted_F1_score()
 			accuracy_score = validation_score.get_accuracy()
 			print "Validation: F1 Score: %.1f , Accuracy: %.1f" % (f1_score * 100.0, accuracy_score * 100.0)
+
+def tempPlotExperiment():
+
+	#t = numpy.arange(0.0, 2.0, 0.01)
+	#s = 1 + numpy.sin(2*numpy.pi*t)
+	s = numpy.array([5,6,7,8,9])
+	t = numpy.array([45,60,58,50,40])
+	plt.plot(s, t)
+
+	s = numpy.array([5,6,7,8,9])
+	t = numpy.array([41,63,60,53,30])
+	plt.plot(s, t)
+
+	plt.xlabel('time (s)')
+	plt.ylabel('voltage (mV)')
+	plt.title('About as simple as it gets, folks')
+	plt.grid(True)
+	#plt.savefig("test.png")
+	plt.show()

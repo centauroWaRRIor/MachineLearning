@@ -10,20 +10,20 @@ class KNN_Classifier(object):
 
 	def reset(self):
 		self.distance_features_list = []
-		self.k_neighbors = 0 # hyper parameter
+		self.k_neighbors = 0 # hyper parameter 1
+		self.distance_function = self.euclidean_distance # hyper parameter 2
 		self.classification_label = None
 		self.feature_labels = []
 		self.dataset = []
 
 	def train(self, dataset, classification_label, distance_features_list):
 		self.distance_features_list = distance_features_list
-		self.k_neighbors = len(self.distance_features_list)
 		self.dataset = dataset # this classifier memorizes more than learn
 		self.classification_label = classification_label
 		self.feature_labels = dataset[0].keys()
 		self.feature_labels.remove(self.classification_label)
 
-	def __euclidean_distance(self, data_point1, data_point2):
+	def euclidean_distance(self, data_point1, data_point2):
 
 		dimension = len(self.distance_features_list)
 		distance = 0
@@ -32,6 +32,21 @@ class KNN_Classifier(object):
 			value2 = data_point2[self.distance_features_list[x]]
 			distance += pow((value2 - value1), 2)
 		return math.sqrt(distance)
+	
+	def cosine_simmilarity(self, data_point1, data_point2):
+
+		dimension = len(self.distance_features_list)
+		a = []
+		b = []
+		# build the two vectors
+		for x in range(dimension):
+			a.append(data_point1[self.distance_features_list[x]])
+			b.append(data_point2[self.distance_features_list[x]])
+		
+		dot_product = np.dot(a, b)
+		norm_a = np.linalg.norm(a)
+		norm_b = np.linalg.norm(b)
+		return dot_product / (norm_a * norm_b)
 
 	def classify(self, item_classify):
 
@@ -39,7 +54,7 @@ class KNN_Classifier(object):
 		# iterate through all the data points and build list of closest neighbors
 		for datapoint in self.dataset:
 			# compute euclidean distance
-			distance = self.__euclidean_distance(item_classify, datapoint)
+			distance = self.euclidean_distance(item_classify, datapoint)
 			distance_item = self.DatapointTuple(datapoint, distance)
 			# pass through add items until closest distance is initially filled up
 			if len(closest_distance_list) < self.k_neighbors:

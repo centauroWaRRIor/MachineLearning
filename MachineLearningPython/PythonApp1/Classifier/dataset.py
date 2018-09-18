@@ -313,7 +313,7 @@ def k_FoldValidation_ID3_tuning(k, rows, classification_label):
 	plot_performance(hyper_parameter_array, hyper_parameter_result_arrays, 'Max Depth', 'F1 Score', 'ID3 Max Depth Tuning')
 
 
-def k_FoldValidation_KNN_tuning(k, rows, classification_label):
+def k_FoldValidation_KNN_tuning(k, rows, classification_label, distance_function="Euclidean"):
 
 	KNN_classifier = KNN_Classifier()
 	dataset_size = len(rows)
@@ -345,6 +345,10 @@ def k_FoldValidation_KNN_tuning(k, rows, classification_label):
 			# train the model
 			KNN_classifier.reset()
 			KNN_classifier.k_neighbors = hyper_parameter
+			if distance_function is "Euclidean":
+				KNN_classifier.distance_function = KNN_classifier.euclidean_distance
+			elif distance_function is "Cosine_Similarity":
+				KNN_classifier.distance_function = KNN_classifier.cosine_simmilarity
 			dimensions = ["citric acid","residual sugar","density"]
 			KNN_classifier.train(training_set, classification_label, dimensions)
 
@@ -365,7 +369,7 @@ def k_FoldValidation_KNN_tuning(k, rows, classification_label):
 			f1_scores.append(f1_score)
 
 		hyper_parameter_result_arrays.append(f1_scores)
-	plot_performance(hyper_parameter_array, hyper_parameter_result_arrays, 'K Neighbor', 'F1 Score', 'KNN K-neighbor Tuning (euclidean)')
+	plot_performance(hyper_parameter_array, hyper_parameter_result_arrays, 'K Neighbor', 'F1 Score', 'KNN K-neighbor Tuning (%s)' % distance_function)
 
 
 def plot_performance(x_values, y_values_arrays, xlabel, ylabel, title):

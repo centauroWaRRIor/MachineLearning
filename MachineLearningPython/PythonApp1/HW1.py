@@ -32,7 +32,8 @@ def main():
 	
 	#k_FoldValidation(4, classifier, data.list_dict[:800], classification_label)
 	#k_FoldValidation_ID3_tuning(4, data.list_dict[:800], classification_label)
-	k_FoldValidation_KNN_tuning(4, data.list_dict[:800], classification_label)
+	#k_FoldValidation_KNN_tuning(4, data.list_dict[:800], classification_label, "Euclidean")
+	k_FoldValidation_KNN_tuning(4, data.list_dict[:800], classification_label, "Cosine_Similarity")
 
 	return 0
 

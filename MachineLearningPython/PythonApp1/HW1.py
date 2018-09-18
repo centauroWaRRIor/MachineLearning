@@ -5,7 +5,6 @@ from Classifier.ID3 import DecisionTree_ID3
 from Classifier.dataset import DataSet
 from Classifier.dataset import k_FoldValidation
 from Classifier.dataset import k_FoldValidation_ID3_tuning
-from Classifier.dataset import tempPlotExperiment
 
 def main():
 	data = DataSet()
@@ -30,8 +29,8 @@ def main():
 
 	
 	#k_FoldValidation(4, classifier, data.list_dict[:800], classification_label)
-	#k_FoldValidation_ID3_tuning(4, classifier, data.list_dict[:800], classification_label)
-	tempPlotExperiment()
+	k_FoldValidation_ID3_tuning(4, classifier, data.list_dict[:800], classification_label)
+	#tempPlotExperiment()
 
 	return 0
 

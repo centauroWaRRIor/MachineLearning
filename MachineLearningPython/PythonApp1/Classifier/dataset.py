@@ -269,7 +269,13 @@ def k_FoldValidation_ID3_tuning(k, ID3_classifier, rows, classification_label):
 	fold_length = int(dataset_size / k)  
 	print "Fold length: ", dataset_size, "/ ",k, " = ", fold_length
 
+	hyper_parameter_array = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+	hyper_parameter_result_arrays = []
+
 	for i in range(k):
+		
+		f1_scores = []
+
 		# use one / kth as the test set
 		test_set = rows[i * fold_length:(i + 1) * fold_length]
 		# use remaining for training
@@ -279,8 +285,6 @@ def k_FoldValidation_ID3_tuning(k, ID3_classifier, rows, classification_label):
 		validation_set = training_set[:validation_set_size]
 		# resize the training set
 		training_set = training_set[validation_set_size:]
-
-		hyper_parameter_array = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 
 		for hyper_parameter in hyper_parameter_array:
 			# train the model
@@ -302,22 +306,22 @@ def k_FoldValidation_ID3_tuning(k, ID3_classifier, rows, classification_label):
 			f1_score = validation_score.get_weighted_F1_score()
 			accuracy_score = validation_score.get_accuracy()
 			print "Validation: F1 Score: %.1f , Accuracy: %.1f" % (f1_score * 100.0, accuracy_score * 100.0)
+			f1_scores.append(f1_score)
 
-def tempPlotExperiment():
+		hyper_parameter_result_arrays.append(f1_scores)
+	plot_performance(hyper_parameter_array, hyper_parameter_result_arrays)
 
-	#t = numpy.arange(0.0, 2.0, 0.01)
-	#s = 1 + numpy.sin(2*numpy.pi*t)
-	s = numpy.array([5,6,7,8,9])
-	t = numpy.array([45,60,58,50,40])
-	plt.plot(s, t)
+def plot_performance(x_values, y_values_arrays):
 
-	s = numpy.array([5,6,7,8,9])
-	t = numpy.array([41,63,60,53,30])
-	plt.plot(s, t)
+	for fold_array in y_values_arrays:
+		s = numpy.array(x_values)
+		t = numpy.array(fold_array)
+		plt.plot(s, t)
 
-	plt.xlabel('time (s)')
-	plt.ylabel('voltage (mV)')
-	plt.title('About as simple as it gets, folks')
+
+	plt.xlabel('Max Depth')
+	plt.ylabel('F1 Score')
+	plt.title('Decision Tree Hyper Parameter tuning')
 	plt.grid(True)
 	#plt.savefig("test.png")
 	plt.show()

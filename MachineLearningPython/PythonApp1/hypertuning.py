@@ -14,8 +14,8 @@ def main():
 	#k_FoldValidation_ID3_tuning(4, data.list_dict, classification_label)
 
 	# tune KNN hyper parameters
-	k_FoldValidation_KNN_tuning(4, data.list_dict, classification_label, "Euclidean")
-	#k_FoldValidation_KNN_tuning(4, data.list_dict, classification_label, "Cosine_Similarity")
+	#k_FoldValidation_KNN_tuning(4, data.list_dict, classification_label, "Euclidean")
+	k_FoldValidation_KNN_tuning(4, data.list_dict, classification_label, "Cosine_Similarity")
 
 	return 0
 

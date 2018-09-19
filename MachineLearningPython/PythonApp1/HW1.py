@@ -10,10 +10,11 @@ from Classifier.dataset import k_FoldValidation_KNN_tuning
 def main():
 	data = DataSet()
 	classification_label = "quality"
-	data.load("winequality-white.csv", classification_label)
+	data.load("winequality-white.csv", classification_label, False)
+	#data.normalize_dataset()
 
 	# simple test
-	#classifier = KNN_Classifier()
+	classifier = KNN_Classifier()
 
 	#item = data.list_dict[101]
 	#item_label = item["quality"]
@@ -30,10 +31,10 @@ def main():
 	#print "result Decision Tree", result
 
 	
-	#k_FoldValidation(4, classifier, data.list_dict[:800], classification_label)
-	#k_FoldValidation_ID3_tuning(4, data.list_dict[:800], classification_label)
+	k_FoldValidation(4, classifier, data.list_dict, classification_label)
+	#k_FoldValidation_ID3_tuning(4, data.list_dict, classification_label)
 	#k_FoldValidation_KNN_tuning(4, data.list_dict[:800], classification_label, "Euclidean")
-	k_FoldValidation_KNN_tuning(4, data.list_dict[:800], classification_label, "Cosine_Similarity")
+	#k_FoldValidation_KNN_tuning(4, data.list_dict, classification_label, "Cosine_Similarity")
 
 	return 0
 

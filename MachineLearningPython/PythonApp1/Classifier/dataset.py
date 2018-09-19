@@ -59,6 +59,42 @@ class DataSet(object):
 		#		self.list_dict[j]["alcohol"], \
 		#		self.list_dict[j]["quality"] \
 
+	def __sigmoid(self, x):
+		"""Sigmoid function has bell shape and squashes input into 
+		0 to 1. A sigmoid function does not ensure the resulting vector 
+		sums up to 1 and outliers get fully saturated with 1"""
+		return 1.0 / (1.0 + numpy.exp(-x))
+		
+	def __sigmoid_n(self, x):
+		"""Sofmax function that also squashes input into 0 to 1 but it does
+		so in a way so that the resulting vector sums up to 1"""
+		numerator = x - numpy.mean(x)
+		denominator = numpy.std(x)
+		fraction = numerator / denominator
+
+		return 1.0 / (1.0 + numpy.exp(-fraction))
+
+	def __normalize_label_data(self, label):
+		"""Normalized data from 0.0 to 1.0 no matter the range of the data"""
+		
+		# copy data into numpy aray for numpy operations
+		def iter_func():
+			for i in range(len(self.list_dict)):
+				yield self.list_dict[i][label]
+
+		numpy_array = numpy.fromiter(iter_func(), dtype=float)
+		normalized_array = self.__sigmoid_n(numpy_array)
+		
+		# copy normalized values back into original data structure
+		for i in range(len(self.list_dict)):
+			self.list_dict[i][label] = normalized_array[i]
+
+	def normalize_dataset(self):
+		"""Public function to normalize the entire dataset"""
+		feature_labels = self.list_dict[0].keys()
+		feature_labels.remove(self.classification_label)
+		for label in feature_labels:
+			self.__normalize_label_data(label)
 
 class Classifier_Score:
 	"""Book keeping object for tracking F1 and Accuracy scores
@@ -142,11 +178,10 @@ class Classifier_Score:
 		else:
 			self.label_count_dict[ground_truth] += 1
 
-		
-		#if prediction not in self.label_count_dict:
-		#	self.label_count_dict[prediction] = 0
-		#else:
-		#	self.label_count_dict[prediction] += 1
+		if prediction not in self.label_count_dict:
+			self.label_count_dict[prediction] = 0
+		else:
+			self.label_count_dict[prediction] += 1
 
 	def get_accuracy(self):
 		return self.correct_classifications / float(self.total_classifications)
@@ -166,6 +201,18 @@ class Classifier_Score:
 		
 		return weighted_f1_score
 
+	def get_macro_F1_score(self):
+		"""TA recommended using the average of all the labels instead of 
+		using the weighted average above"""
+
+		total_labels_present = len(self.label_count_dict.keys())
+
+		labels_f1_sum = 0
+		for label in self.label_count_dict.keys():
+			label_f1_score = self.F1_Score(label, self.ground_truth_array, self.predictions_array)
+			labels_f1_sum += label_f1_score.get_f1_score()
+
+		return labels_f1_sum / float(total_labels_present)
 
 def k_FoldValidation(k, classifier, rows, classification_label):
      
@@ -190,7 +237,7 @@ def k_FoldValidation(k, classifier, rows, classification_label):
 		# use remaining for training
 		training_set = rows[:i * fold_length] + rows[(i + 1) * fold_length:]
 		# among training set, reserve 20% for validation tuning
-		validation_set_size = 0.2 * len(training_set)
+		validation_set_size = int(0.2 * len(training_set))
 		validation_set = training_set[:validation_set_size]
 		# resize the training set
 		training_set = training_set[validation_set_size:]
@@ -202,6 +249,8 @@ def k_FoldValidation(k, classifier, rows, classification_label):
 			classifier.max_depth = 30
 			classifier.train(training_set, classification_label)
 		elif isinstance(classifier, KNN_Classifier):
+			classifier.k_neighbors = 3
+			classifier.distance_function = classifier.cosine_simmilarity
 			classifier.train(training_set, classification_label, ["citric acid","residual sugar","density"])
 
 		training_score = Classifier_Score();
@@ -230,17 +279,17 @@ def k_FoldValidation(k, classifier, rows, classification_label):
 			test_score.record_result(ground_truth, prediction)
 
 		print "Fold-%d:" % (i+1)
-		f1_score = training_score.get_weighted_F1_score()
+		f1_score = training_score.get_macro_F1_score()
 		accuracy_score = training_score.get_accuracy()
 		average_f1_training_score.append(f1_score)
 		average_accuracy_training_score.append(accuracy_score)
 		print "Training: F1 Score: %.1f , Accuracy: %.1f" % (f1_score * 100.0, accuracy_score * 100.0)
-		f1_score = validation_score.get_weighted_F1_score()
+		f1_score = validation_score.get_macro_F1_score()
 		accuracy_score = validation_score.get_accuracy()
 		average_f1_validation_score.append(f1_score)
 		average_accuracy_validation_score.append(accuracy_score)
 		print "Validation: F1 Score: %.1f , Accuracy: %.1f" % (f1_score * 100.0, accuracy_score * 100.0)
-		f1_score = test_score.get_weighted_F1_score()
+		f1_score = test_score.get_macro_F1_score()
 		accuracy_score = test_score.get_accuracy()
 		average_f1_test_score.append(f1_score)
 		average_accuracy_test_score.append(accuracy_score)
@@ -253,7 +302,7 @@ def k_FoldValidation(k, classifier, rows, classification_label):
 	print "Training: F1 Score: %.1f , Accuracy: %.1f" % (numpy.average(f1_score) * 100.0, numpy.average(accuracy_score) * 100.0)
 	f1_score = numpy.array(average_f1_validation_score)
 	accuracy_score = numpy.array(average_accuracy_validation_score)
-	print "Training: F1 Score: %.1f , Accuracy: %.1f" % (numpy.average(f1_score) * 100.0, numpy.average(accuracy_score) * 100.0)
+	print "Validation: F1 Score: %.1f , Accuracy: %.1f" % (numpy.average(f1_score) * 100.0, numpy.average(accuracy_score) * 100.0)
 	f1_score = numpy.array(average_f1_test_score)
 	accuracy_score = numpy.array(average_accuracy_test_score)
 	print "Test: F1 Score: %.1f , Accuracy: %.1f" % (numpy.average(f1_score) * 100.0, numpy.average(accuracy_score) * 100.0)
@@ -304,7 +353,7 @@ def k_FoldValidation_ID3_tuning(k, rows, classification_label):
 
 			print "Fold-%d:" % (i+1)
 			print "Hyper parameter max_depth = %d" % hyper_parameter
-			f1_score = validation_score.get_weighted_F1_score()
+			f1_score = validation_score.get_macro_F1_score()
 			accuracy_score = validation_score.get_accuracy()
 			print "Validation: F1 Score: %.1f , Accuracy: %.1f" % (f1_score * 100.0, accuracy_score * 100.0)
 			f1_scores.append(f1_score)
@@ -363,7 +412,7 @@ def k_FoldValidation_KNN_tuning(k, rows, classification_label, distance_function
 
 			print "Fold-%d:" % (i+1)
 			print "Hyper parameter k-nieghbor = %d" % hyper_parameter
-			f1_score = validation_score.get_weighted_F1_score()
+			f1_score = validation_score.get_macro_F1_score()
 			accuracy_score = validation_score.get_accuracy()
 			print "Validation: F1 Score: %.1f , Accuracy: %.1f" % (f1_score * 100.0, accuracy_score * 100.0)
 			f1_scores.append(f1_score)

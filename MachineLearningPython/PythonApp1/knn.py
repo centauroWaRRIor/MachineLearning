@@ -8,7 +8,7 @@ def main():
 	data = DataSet()
 	classification_label = "quality"
 	data.load("winequality-white.csv", classification_label, False)
-	#data.normalize_dataset()
+	data.normalize_dataset()
 
 	classifier = KNN_Classifier()
 	# hyper parameters were found through experimenatation (hypertuning.py) and values were hardcoded

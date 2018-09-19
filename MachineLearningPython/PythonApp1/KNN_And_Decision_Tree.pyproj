@@ -5,7 +5,7 @@
     <ProjectGuid>d7b00c5b-a99c-44b3-92e3-976fc502bace</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>hypertuning.py</StartupFile>
+    <StartupFile>knn.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

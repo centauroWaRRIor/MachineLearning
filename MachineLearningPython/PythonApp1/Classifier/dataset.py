@@ -230,6 +230,8 @@ def k_FoldValidation(k, classifier, rows, classification_label):
 	average_f1_test_score = []
 	average_accuracy_test_score = []
 
+	do_once = True
+
 	for i in range(k):
 		# use one / kth as the test set
 		test_set = rows[i * fold_length:(i + 1) * fold_length]
@@ -243,20 +245,27 @@ def k_FoldValidation(k, classifier, rows, classification_label):
 
 		# train the model
 		classifier.reset()
-		print "Hyper-parameters:"
+		
+		if do_once:
+			print "Hyper-parameters:"
 		if isinstance(classifier, DecisionTree_ID3):
 			classifier.max_depth = 9 # See report for experimentation data that lead to this conclusion
-			print "Max-Depth: %d" % classifier.max_depth
+			if do_once:
+				print "Max-Depth: %d\n" % classifier.max_depth
 			classifier.train(training_set, classification_label)
 		elif isinstance(classifier, KNN_Classifier):
 			classifier.k_neighbors = 7 # See report for experimentation data that lead to this conclusion
 			classifier.distance_function = classifier.cosine_simmilarity # See report for experimentation data that lead to this conclusion
-			print "K: %d" % classifier.k_neighbors
+			if do_once:
+				print "K: %d" % classifier.k_neighbors
 			if classifier.distance_function is classifier.cosine_simmilarity:
-				print "Distance measure: Cosine Similarity"
+				if do_once:
+					print "Distance measure: Cosine Similarity\n"
 			elif classifier.distance_function is classifier.euclidean_distance:
-				print "Euclidean Distance"
+				if do_once:
+					print "Euclidean Distance\n"
 			classifier.train(training_set, classification_label, ["citric acid","residual sugar","density"])
+		do_once = False
 
 		training_score = Classifier_Score();
 		validation_score = Classifier_Score();

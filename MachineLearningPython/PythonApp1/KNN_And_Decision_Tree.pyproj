@@ -5,7 +5,7 @@
     <ProjectGuid>d7b00c5b-a99c-44b3-92e3-976fc502bace</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>decisiontree.py</StartupFile>
+    <StartupFile>randomtest.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -32,6 +32,9 @@
     <Compile Include="Classifier\KNN.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Classifier\baseline.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Classifier\tuning.py">
       <SubType>Code</SubType>
     </Compile>
@@ -46,6 +49,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="knn.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="randomtest.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

@@ -3,6 +3,7 @@ import numpy
 from random import shuffle
 from KNN import KNN_Classifier
 from ID3 import DecisionTree_ID3
+from baseline import Random_Classifier
 
 class DataSet(object):
 	def __init__(self):
@@ -265,6 +266,8 @@ def k_FoldValidation(k, classifier, rows, classification_label):
 				if do_once:
 					print "Euclidean Distance\n"
 			classifier.train(training_set, classification_label, ["citric acid","residual sugar","density"])
+		elif isinstance(classifier, Random_Classifier):
+			print "None"
 		do_once = False
 
 		training_score = Classifier_Score();

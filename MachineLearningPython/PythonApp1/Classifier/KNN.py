@@ -1,4 +1,5 @@
 import math
+import numpy
 from collections import namedtuple
 
 class KNN_Classifier(object):
@@ -43,9 +44,9 @@ class KNN_Classifier(object):
 			a.append(data_point1[self.distance_features_list[x]])
 			b.append(data_point2[self.distance_features_list[x]])
 		
-		dot_product = np.dot(a, b)
-		norm_a = np.linalg.norm(a)
-		norm_b = np.linalg.norm(b)
+		dot_product = numpy.dot(a, b)
+		norm_a = numpy.linalg.norm(a)
+		norm_b = numpy.linalg.norm(b)
 		return dot_product / (norm_a * norm_b)
 
 	def classify(self, item_classify):
@@ -53,8 +54,8 @@ class KNN_Classifier(object):
 		closest_distance_list = []
 		# iterate through all the data points and build list of closest neighbors
 		for datapoint in self.dataset:
-			# compute euclidean distance
-			distance = self.euclidean_distance(item_classify, datapoint)
+			# compute distance
+			distance = self.distance_function(item_classify, datapoint)
 			distance_item = self.DatapointTuple(datapoint, distance)
 			# pass through add items until closest distance is initially filled up
 			if len(closest_distance_list) < self.k_neighbors:
@@ -69,7 +70,7 @@ class KNN_Classifier(object):
 		return self.__majority_vote_label(closest_distance_list)
 
 
-	def __majority_vote_label(self, closest_distance_list, ):
+	def __majority_vote_label(self, closest_distance_list):
 
 		count_dict = {}
 		# cast the votes

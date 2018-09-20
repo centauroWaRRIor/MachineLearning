@@ -256,7 +256,7 @@ def k_FoldValidation(k, classifier, rows, classification_label):
 			classifier.train(training_set, classification_label)
 		elif isinstance(classifier, KNN_Classifier):
 			classifier.k_neighbors = 7 # See report for experimentation data that lead to this conclusion
-			classifier.distance_function = classifier.cosine_simmilarity # See report for experimentation data that lead to this conclusion
+			classifier.distance_function = classifier.euclidean_distance # See report for experimentation data that lead to this conclusion
 			if do_once:
 				print "K: %d" % classifier.k_neighbors
 			if classifier.distance_function is classifier.cosine_simmilarity:

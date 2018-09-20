@@ -17,5 +17,5 @@ def main():
 
 if __name__ == "__main__":
 	sys.setrecursionlimit(5000)
-	#sys.exit(int(main() or 0)) # use for when running without debugging
-	main() # use for when debugging within Visual Studio
+	sys.exit(int(main() or 0)) # use for when running without debugging
+	#main() # use for when debugging within Visual Studio

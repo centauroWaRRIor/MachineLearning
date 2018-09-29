@@ -95,9 +95,9 @@ class Vanilla_Perceptron:
 	The 784 inputs come directly from MNIST hand written images once the vector
 	has been flattened"""
 	
-	def __init__(self, predict_label,init_random_weights=False):
+	def __init__(self, predict_label, init_random_weights=False):
 		#self.scorer = Classifier_Score()
-		self.num_features = 284
+		self.num_features = 784
 		self.weights = []
 		self.predict_label = predict_label # this is the handwritten digit this perceptron is going to learn to predict
 		# initialize the weights
@@ -107,10 +107,12 @@ class Vanilla_Perceptron:
 			else:
 				self.weights.append(0.0)
 
-	def predict(inputs):
-
-		assert(len(inputs) == len(self.weights))
+	def predict(self, inputs):
+		print "inputs", len(inputs)
+		print "weights", len(self.weights)
 		inputs.append(1) # add bias term
+		assert(len(inputs) == len(self.weights))
+
 		w_dot_x = 0.0
 		for i in range(self.num_features + 1): # + 1 for the bias term which is treated as just another feature
 			w_dot_x += inputs[i] * self.weights[i] 
@@ -120,7 +122,7 @@ class Vanilla_Perceptron:
 		else:
 			return 0.0
 
-	def predict_w_dot_x(inputs):
+	def predict_w_dot_x(self, inputs):
 
 		assert(len(inputs) == len(self.weights))
 		inputs.append(1) # add bias term
@@ -133,12 +135,12 @@ class Vanilla_Perceptron:
 		else:
 			return 0.0
 
-	def train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate=1.00):
+	def train_weights_one_epoch(self, inputs_vector, ground_truth_labels, l_rate=1.00):
 
 		assert(len(inputs_vector) == len(ground_truth_labels))
 
 		for inputs, label in zip(inputs_vector, ground_truth_labels):
-			prediction = predict(inputs) # get predicted classificaion, 0 or 1
+			prediction = self.predict(inputs) # get predicted classificaion, 0 or 1
 			# label is a digit from 0 to 9 so need to normalize
 			normalized_label = 0
 			if self.predict_label == normalized_label:
@@ -160,12 +162,12 @@ class Digit_Classifier_Vanilla:
 			self.perceptrons.append(Vanilla_Perceptron(i))
 
 
-	def train(number_epoch, inputs_vector, ground_truth_labels, l_rate=1.00):
+	def train(self, number_epoch, inputs_vector, ground_truth_labels, l_rate=1.00):
 		for i in range(number_epoch):
 			for perceptron in self.perceptrons:
 				perceptron.train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate)
 
-	def predict(inputs_vector, ground_truth_labels):
+	def predict(self, inputs_vector, ground_truth_labels):
 
 		scorer.reset()
 		for inputs, label in zip(inputs_vector, ground_truth_labels):
@@ -303,15 +305,25 @@ def main():
 	#image_python_array = data_stream.get_rounded_1d_image(33)
 	#print image_python_array
 	
-	f1_scoring = Classifier_Score()
-	y_true = [0, 1, 2, 0, 1, 2]
-	y_pred = [0, 2, 1, 0, 0, 1]
-	for true, pred in zip(y_true, y_pred):
-		f1_scoring.record_result(true, pred)
-	print "F1-Score: ", f1_scoring.get_macro_F1_score()
+	#f1_scoring = Classifier_Score()
+	#y_true = [0, 1, 2, 0, 1, 2]
+	#y_pred = [0, 2, 1, 0, 0, 1]
+	#for true, pred in zip(y_true, y_pred):
+	#	f1_scoring.record_result(true, pred)
+	#print "F1-Score: ", f1_scoring.get_macro_F1_score()
 
+	inputs_vector = []
+	ground_truth_labels = []
+
+	for i in range(500):
+		inputs_vector.append(data_stream.get_rounded_1d_image(i))
+		ground_truth_labels.append(data_stream.get_label(i))
 
 	vanilla_classifier = Digit_Classifier_Vanilla()
+	vanilla_classifier.train(50, inputs_vector, ground_truth_labels, 0.001)
+
+	# Predict the training data
+	vanilla_classifier = predict(inputs_vector, ground_truth_labels)
 
 	return 0
 

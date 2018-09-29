@@ -96,24 +96,40 @@ class Vanilla_Perceptron:
 	has been flattened"""
 	
 	def __init__(self, predict_label,init_random_weights=False):
-		self.scorer = Classifier_Score()
+		#self.scorer = Classifier_Score()
 		self.num_features = 284
 		self.weights = []
 		self.predict_label = predict_label # this is the handwritten digit this perceptron is going to learn to predict
 		# initialize the weights
 		for i in range(self.num_features + 1): # + 1 for the bias term which is treated as just another feature
 			if init_random_weights:
-				weights.append(random.uniform(-1.0, 1.0))
+				self.weights.append(random.uniform(-1.0, 1.0))
 			else:
-				weights.append(0.0)
+				self.weights.append(0.0)
 
 	def predict(inputs):
+
+		assert(len(inputs) == len(self.weights))
+		inputs.append(1) # add bias term
 		w_dot_x = 0.0
 		for i in range(self.num_features + 1): # + 1 for the bias term which is treated as just another feature
 			w_dot_x += inputs[i] * self.weights[i] 
 
 		if w_dot_x >= 0.0:
 			return 1.0
+		else:
+			return 0.0
+
+	def predict_w_dot_x(inputs):
+
+		assert(len(inputs) == len(self.weights))
+		inputs.append(1) # add bias term
+		w_dot_x = 0.0
+		for i in range(self.num_features + 1): # + 1 for the bias term which is treated as just another feature
+			w_dot_x += inputs[i] * self.weights[i] 
+
+		if w_dot_x >= 0.0:
+			return w_dot_x
 		else:
 			return 0.0
 
@@ -128,11 +144,43 @@ class Vanilla_Perceptron:
 			if self.predict_label == normalized_label:
 				normalized_label = 1
 			y_hat = normalized_label - prediction
-			scorer.record_result(self, normalized_label, prediction)
+			#scorer.record_result(self, normalized_label, prediction)
 			error = abs(y_hat)	# get error from real classification 0 or 1 
 			
 			for i in range(self.num_features + 1): 	# calculate new weight for each node
 				self.weights[i] = self.weights[i] + (error * l_rate * y_hat * inputs[i]) 
+
+class Digit_Classifier_Vanilla:
+	"""10 vanilla perceptrons, each one trained to recognize one digit"""
+		
+	def __init__(self):
+		self.scorer = Classifier_Score()
+		self.perceptrons = []
+		for i in range(10):
+			self.perceptrons.append(Vanilla_Perceptron(i))
+
+
+	def train(number_epoch, inputs_vector, ground_truth_labels, l_rate=1.00):
+		for i in range(number_epoch):
+			for perceptron in self.perceptrons:
+				perceptron.train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate)
+
+	def predict(inputs_vector, ground_truth_labels):
+
+		scorer.reset()
+		for inputs, label in zip(inputs_vector, ground_truth_labels):
+			largest_w_dot_x = 0
+			largest_w_dot_x_index = 0 # by default predict 0
+			for i in range(10):
+				w_dot_x = perceptrons[i].predict_w_dot_x(inputs)
+				if w_dot_x > largest_w_dot_x:
+					largest_w_dot_x = w_dot_x
+					largest_w_dot_x_index = i
+			# prediction is stored in largest_w_dot_x_index
+			scorer.record_result(self, label, largest_w_dot_x_index)
+
+		# report F1-Score
+		print "F1-score: ", scorer.get_macro_F1_score()
 
 class Classifier_Score:
 	"""Book keeping object for tracking F1 and Accuracy scores
@@ -260,7 +308,10 @@ def main():
 	y_pred = [0, 2, 1, 0, 0, 1]
 	for true, pred in zip(y_true, y_pred):
 		f1_scoring.record_result(true, pred)
-	print "F1-Score: ", f1_scoring.get_macro_F1_score();
+	print "F1-Score: ", f1_scoring.get_macro_F1_score()
+
+
+	vanilla_classifier = Digit_Classifier_Vanilla()
 
 	return 0
 

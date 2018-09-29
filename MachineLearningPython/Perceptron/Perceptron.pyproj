@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>58045b9b-917d-4067-b35d-4adf8da791ee</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Perceptron.py</StartupFile>
+    <StartupFile>vanilla_perceptron.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,10 +22,25 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Perceptron.py" />
+    <Compile Include="hypertuning.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="vanilla_perceptron.py" />
+    <Compile Include="Utilities\datastream.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utilities\score.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utilities\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|2.7" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utilities\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

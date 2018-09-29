@@ -4,186 +4,6 @@ import struct
 import random
 import numpy as np
 
-
-class MNIST_Datastream:
-	"""Simulates an infinite stream of examples"""
-
-	def __init__(self, images_filename, labels_filename):
-
-		# open file
-		self.images_file = open(images_filename, 'rb')
-		self.labels_file = open(labels_filename, 'rb')
-
-		# extract magic number
-		self.images_file.seek(0)
-		self.magic_number = struct.unpack('>4B', self.images_file.read(4))
-		self.labels_file.seek(0)
-		self.magic_number = struct.unpack('>4B', self.labels_file.read(4))
-
-		#32-bit integer (4 bytes)
-		self.images_file.seek(4)
-		self.num_images = struct.unpack('>I', self.images_file.read(4))[0]
-		print "num images: ", self.num_images
-		self.num_rows = struct.unpack('>I', self.images_file.read(4))[0]
-		print "num rows: ", self.num_rows
-		self.num_columns = struct.unpack('>I', self.images_file.read(4))[0]
-		print "num columns: ", self.num_columns
-
-		self.labels_file.seek(4)
-		assert(self.num_images == struct.unpack('>I', self.labels_file.read(4))[0])
-
-		self.label_bytes = 1 
-		self.image_bytes = self.num_rows * self.num_columns # one byte per grid entry
-
-
-	def __del__(self):
-
-		self.images_file.close()
-		self.labels_file.close()
-
-	def get_label(self, image_index):
-
-		file_offset = 8 + image_index * self.label_bytes
-		self.labels_file.seek(file_offset) # absolute offset
-		label = struct.unpack('>'+'B' * self.label_bytes, self.labels_file.read(self.label_bytes))[0]
-		# returns python array
-		return label
-
-	def get_image(self, image_index):
-
-		file_offset = 16 + image_index * self.image_bytes
-		self.images_file.seek(file_offset) # absolute offset
-		image_numpy_array = np.asarray(struct.unpack('>'+'B' * self.image_bytes, self.images_file.read(self.image_bytes))).reshape(self.num_rows, self.num_columns)
-		# returns python array
-		return image_numpy_array.tolist()
-
-
-	def get_rounded_image(self, image_index):
-
-		image = self.get_image(image_index)
-		for i in range(self.num_rows):
-			for j in range(self.num_columns):
-				image[i][j] = int(round(image[i][j]/255.0))
-		return image
-
-	def get_1d_image(self, image_index):
-
-		file_offset = 16 + image_index * self.image_bytes
-		self.images_file.seek(file_offset) # absolute offset
-		image_numpy_array = np.asarray(struct.unpack('>'+'B' * self.image_bytes, self.images_file.read(self.image_bytes)))
-		# returns python array
-		return image_numpy_array.tolist()
-
-
-	def get_rounded_1d_image(self, image_index):
-
-		image = self.get_1d_image(image_index)
-		for i in range(self.num_rows * self.num_columns):
-			image[i] = int(round(image[i]/255.0))
-		return image
-
-
-	def ascii_show(self, image):
-		for y in image:
-			row = ""
-			for x in y:
-				row += '{0: <4}'.format(x)
-			print row
-
-class Vanilla_Perceptron:
-	""" Vanilla implementation of a perceptron with 784 features + bias
-	The 784 inputs come directly from MNIST hand written images once the vector
-	has been flattened"""
-	
-	def __init__(self, predict_label, init_random_weights=False):
-		#self.scorer = Classifier_Score()
-		self.num_features = 784
-		self.weights = []
-		self.predict_label = predict_label # this is the handwritten digit this perceptron is going to learn to predict
-		# initialize the weights
-		for i in range(self.num_features + 1): # + 1 for the bias term which is treated as just another feature
-			if init_random_weights:
-				self.weights.append(random.uniform(-1.0, 1.0))
-			else:
-				self.weights.append(0.0)
-
-	def predict(self, inputs):
-		print "inputs", len(inputs)
-		print "weights", len(self.weights)
-		inputs.append(1) # add bias term
-		assert(len(inputs) == len(self.weights))
-
-		w_dot_x = 0.0
-		for i in range(self.num_features + 1): # + 1 for the bias term which is treated as just another feature
-			w_dot_x += inputs[i] * self.weights[i] 
-
-		if w_dot_x >= 0.0:
-			return 1.0
-		else:
-			return 0.0
-
-	def predict_w_dot_x(self, inputs):
-
-		assert(len(inputs) == len(self.weights))
-		inputs.append(1) # add bias term
-		w_dot_x = 0.0
-		for i in range(self.num_features + 1): # + 1 for the bias term which is treated as just another feature
-			w_dot_x += inputs[i] * self.weights[i] 
-
-		if w_dot_x >= 0.0:
-			return w_dot_x
-		else:
-			return 0.0
-
-	def train_weights_one_epoch(self, inputs_vector, ground_truth_labels, l_rate=1.00):
-
-		assert(len(inputs_vector) == len(ground_truth_labels))
-
-		for inputs, label in zip(inputs_vector, ground_truth_labels):
-			prediction = self.predict(inputs) # get predicted classificaion, 0 or 1
-			# label is a digit from 0 to 9 so need to normalize
-			normalized_label = 0
-			if self.predict_label == normalized_label:
-				normalized_label = 1
-			y_hat = normalized_label - prediction
-			#scorer.record_result(self, normalized_label, prediction)
-			error = abs(y_hat)	# get error from real classification 0 or 1 
-			
-			for i in range(self.num_features + 1): 	# calculate new weight for each node
-				self.weights[i] = self.weights[i] + (error * l_rate * y_hat * inputs[i]) 
-
-class Digit_Classifier_Vanilla:
-	"""10 vanilla perceptrons, each one trained to recognize one digit"""
-		
-	def __init__(self):
-		self.scorer = Classifier_Score()
-		self.perceptrons = []
-		for i in range(10):
-			self.perceptrons.append(Vanilla_Perceptron(i))
-
-
-	def train(self, number_epoch, inputs_vector, ground_truth_labels, l_rate=1.00):
-		for i in range(number_epoch):
-			for perceptron in self.perceptrons:
-				perceptron.train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate)
-
-	def predict(self, inputs_vector, ground_truth_labels):
-
-		scorer.reset()
-		for inputs, label in zip(inputs_vector, ground_truth_labels):
-			largest_w_dot_x = 0
-			largest_w_dot_x_index = 0 # by default predict 0
-			for i in range(10):
-				w_dot_x = perceptrons[i].predict_w_dot_x(inputs)
-				if w_dot_x > largest_w_dot_x:
-					largest_w_dot_x = w_dot_x
-					largest_w_dot_x_index = i
-			# prediction is stored in largest_w_dot_x_index
-			scorer.record_result(self, label, largest_w_dot_x_index)
-
-		# report F1-Score
-		print "F1-score: ", scorer.get_macro_F1_score()
-
 class Classifier_Score:
 	"""Book keeping object for tracking F1 and Accuracy scores
 	"""
@@ -290,6 +110,187 @@ class Classifier_Score:
 
 		return labels_f1_sum / float(total_labels_present)
 
+
+class MNIST_Datastream:
+	"""Simulates an infinite stream of examples"""
+
+	def __init__(self, images_filename, labels_filename):
+
+		# open file
+		self.images_file = open(images_filename, 'rb')
+		self.labels_file = open(labels_filename, 'rb')
+
+		# extract magic number
+		self.images_file.seek(0)
+		self.magic_number = struct.unpack('>4B', self.images_file.read(4))
+		self.labels_file.seek(0)
+		self.magic_number = struct.unpack('>4B', self.labels_file.read(4))
+
+		#32-bit integer (4 bytes)
+		self.images_file.seek(4)
+		self.num_images = struct.unpack('>I', self.images_file.read(4))[0]
+		print "num images: ", self.num_images
+		self.num_rows = struct.unpack('>I', self.images_file.read(4))[0]
+		print "num rows: ", self.num_rows
+		self.num_columns = struct.unpack('>I', self.images_file.read(4))[0]
+		print "num columns: ", self.num_columns
+
+		self.labels_file.seek(4)
+		assert(self.num_images == struct.unpack('>I', self.labels_file.read(4))[0])
+
+		self.label_bytes = 1 
+		self.image_bytes = self.num_rows * self.num_columns # one byte per grid entry
+
+
+	def __del__(self):
+
+		self.images_file.close()
+		self.labels_file.close()
+
+	def get_label(self, image_index):
+
+		file_offset = 8 + image_index * self.label_bytes
+		self.labels_file.seek(file_offset) # absolute offset
+		label = struct.unpack('>'+'B' * self.label_bytes, self.labels_file.read(self.label_bytes))[0]
+		# returns python array
+		return label
+
+	def get_image(self, image_index):
+
+		file_offset = 16 + image_index * self.image_bytes
+		self.images_file.seek(file_offset) # absolute offset
+		image_numpy_array = np.asarray(struct.unpack('>'+'B' * self.image_bytes, self.images_file.read(self.image_bytes))).reshape(self.num_rows, self.num_columns)
+		# returns python array
+		return image_numpy_array.tolist()
+
+
+	def get_rounded_image(self, image_index):
+
+		image = self.get_image(image_index)
+		for i in range(self.num_rows):
+			for j in range(self.num_columns):
+				image[i][j] = int(round(image[i][j]/255.0))
+		return image
+
+	def get_1d_image(self, image_index):
+
+		file_offset = 16 + image_index * self.image_bytes
+		self.images_file.seek(file_offset) # absolute offset
+		image_numpy_array = np.asarray(struct.unpack('>'+'B' * self.image_bytes, self.images_file.read(self.image_bytes)))
+		# returns python array
+		return image_numpy_array.tolist()
+
+
+	def get_rounded_1d_image(self, image_index):
+
+		image = self.get_1d_image(image_index)
+		for i in range(self.num_rows * self.num_columns):
+			image[i] = int(round(image[i]/255.0))
+		return image
+
+
+	def ascii_show(self, image):
+		for y in image:
+			row = ""
+			for x in y:
+				row += '{0: <4}'.format(x)
+			print row
+
+class Vanilla_Perceptron:
+	""" Vanilla implementation of a perceptron with 784 features + bias
+	The 784 inputs come directly from MNIST hand written images once the vector
+	has been flattened"""
+	
+	def __init__(self, predict_label, init_random_weights=False):
+		self.num_features = 785
+		self.weights = []
+		self.predict_label = predict_label # this is the handwritten digit this perceptron is going to learn to predict
+		# initialize the weights
+		for i in range(self.num_features):
+			if init_random_weights:
+				self.weights.append(random.uniform(-1.0, 1.0))
+			else:
+				self.weights.append(0.0)
+
+	def predict(self, inputs):
+
+		assert(len(inputs) == len(self.weights))
+
+		w_dot_x = 0.0
+		for i in range(self.num_features):
+			w_dot_x += inputs[i] * self.weights[i] 
+
+		if w_dot_x >= 0.0:
+			return 1
+		else:
+			return 0
+
+	def predict_w_dot_x(self, inputs):
+
+		assert(len(inputs) == len(self.weights))
+		
+		w_dot_x = 0.0
+		for i in range(self.num_features):
+			w_dot_x += inputs[i] * self.weights[i] 
+
+		if w_dot_x >= 0.0:
+			return w_dot_x
+		else:
+			return 0.0
+
+	def train_weights_one_epoch(self, inputs_vector, ground_truth_labels, l_rate=1.00):
+
+		assert(len(inputs_vector) == len(ground_truth_labels))
+
+		for inputs, label in zip(inputs_vector, ground_truth_labels):
+
+			prediction = self.predict(inputs) # get predicted classificaion, 0 or 1
+			# label is a digit from 0 to 9 so need to normalize
+			binary_label = 0
+			if self.predict_label == label:
+				binary_label = 1
+			y_hat = binary_label - prediction		
+			error = abs(y_hat)	# get error from real classification 0 or 1 
+			
+			for i in range(self.num_features):
+				self.weights[i] = self.weights[i] + (error * l_rate * y_hat * inputs[i]) 
+
+class Digit_Classifier_Vanilla:
+	"""10 vanilla perceptrons, each one trained to recognize one digit"""
+		
+	def __init__(self):
+		self.scorer = Classifier_Score()
+		self.perceptrons = []
+		for i in range(10):
+			self.perceptrons.append(Vanilla_Perceptron(i))
+
+
+	def train(self, number_epoch, inputs_vector, ground_truth_labels, l_rate=1.00):
+		for i in range(number_epoch):
+			print ("Epoch# ", i)
+			for perceptron in self.perceptrons:
+				perceptron.train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate)
+
+	def predict(self, inputs_vector, ground_truth_labels):
+
+		self.scorer.reset()
+		for inputs, label in zip(inputs_vector, ground_truth_labels):
+			largest_w_dot_x = 0
+			largest_w_dot_x_index = 0 # by default predict 0
+			for i in range(10):
+				w_dot_x = self.perceptrons[i].predict_w_dot_x(inputs)
+				#print ("predicted w_dot_x: ", w_dot_x)
+				if w_dot_x > largest_w_dot_x:
+					largest_w_dot_x = w_dot_x
+					largest_w_dot_x_index = i
+			# prediction is stored in largest_w_dot_x_index
+			print ("predicted: ", largest_w_dot_x_index, "expected: ", label)
+			self.scorer.record_result(label, largest_w_dot_x_index)
+
+		# report F1-Score
+		print "F1-score: ", self.scorer.get_macro_F1_score()
+
+
 def main():
 
 	images_filename = "C:/Users/Emmauel/Desktop/CS_578/hw2/train-images-idx3-ubyte/train-images.idx3-ubyte"
@@ -316,14 +317,17 @@ def main():
 	ground_truth_labels = []
 
 	for i in range(500):
-		inputs_vector.append(data_stream.get_rounded_1d_image(i))
+		feature_inputs = data_stream.get_rounded_1d_image(i)
+		# augment the inputs with the bias term
+		feature_inputs.append(1)
+		inputs_vector.append(feature_inputs)
 		ground_truth_labels.append(data_stream.get_label(i))
 
 	vanilla_classifier = Digit_Classifier_Vanilla()
 	vanilla_classifier.train(50, inputs_vector, ground_truth_labels, 0.001)
 
 	# Predict the training data
-	vanilla_classifier = predict(inputs_vector, ground_truth_labels)
+	vanilla_classifier.predict(inputs_vector, ground_truth_labels)
 
 	return 0
 

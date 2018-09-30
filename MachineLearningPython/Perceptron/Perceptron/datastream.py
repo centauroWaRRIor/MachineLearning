@@ -1,3 +1,6 @@
+import struct
+import numpy as np
+
 class MNIST_Datastream:
 	"""Simulates an infinite stream of examples"""
 

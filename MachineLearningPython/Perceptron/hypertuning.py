@@ -1,7 +1,76 @@
 import sys
+import numpy
+import matplotlib.pyplot as plt
 
 from Perceptron.datastream import MNIST_Datastream
 from Perceptron.digit_classifier import Digit_Classifier_Vanilla
+
+def plot_performance(x_values, y_values_arrays, xlabel, ylabel, title):
+
+	for fold_array in y_values_arrays:
+		s = numpy.array(x_values)
+		t = numpy.array(fold_array)
+		plt.plot(s, t)
+
+
+	plt.xlabel(xlabel)
+	plt.ylabel(ylabel)
+	plt.title(title)
+	plt.grid(True)
+	plt.savefig(str(title) + ".png")
+	#plt.show()
+
+def experiment_training_size(
+	training_data_stream,
+	test_data_stream,
+	training_size_initial, 
+	training_size_final, 
+	training_size_step, 
+	number_epoch, 
+	learning_rate):
+
+	inputs_vector = []
+	ground_truth_labels = []
+	plot_x_values = []
+	plot_y_train_values = []
+	plot_y_test_values = []
+
+	for training_size in range(training_size_initial, training_size_final, training_size_step):
+		
+		plot_x_values.append(training_size)
+		print ("Training size = ", training_size)
+
+		# build the training data stream
+		for i in range(training_size):
+			feature_inputs = training_data_stream.get_rounded_1d_image(i)
+			# augment the inputs with the bias term
+			feature_inputs.append(1)
+			inputs_vector.append(feature_inputs)
+			ground_truth_labels.append(training_data_stream.get_label(i))
+
+		# train the classifier using the data stream above
+		vanilla_classifier = Digit_Classifier_Vanilla()
+		vanilla_classifier.train(number_epoch, inputs_vector, ground_truth_labels, learning_rate)
+
+		# evaluate performance on the training data
+		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
+		plot_y_train_values.append(f1_score)
+
+		# evaluate performance on the test data
+		inputs_vector = []
+		ground_truth_labels = []
+		for i in range(training_size):
+			feature_inputs = test_data_stream.get_rounded_1d_image(i)
+			# augment the inputs with the bias term
+			feature_inputs.append(1)
+			inputs_vector.append(feature_inputs)
+			ground_truth_labels.append(test_data_stream.get_label(i))	
+		# evaluate performance on the test data
+		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
+		plot_y_test_values.append(f1_score)
+
+	plot_performance(plot_x_values, plot_y_train_values, "Training size", "F1 Score", "Training_size_effect_on_training")
+	plot_performance(plot_x_values, plot_y_test_values, "Training size", "F1 Score", "Training_size_effect_on_test")
 
 def main():
 
@@ -30,37 +99,10 @@ def main():
 	#	f1_scoring.record_result(true, pred)
 	#print "F1-Score: ", f1_scoring.get_macro_F1_score()
 
-	inputs_vector = []
-	ground_truth_labels = []
-
-	for i in range(500):
-		feature_inputs = training_data_stream.get_rounded_1d_image(i)
-		# augment the inputs with the bias term
-		feature_inputs.append(1)
-		inputs_vector.append(feature_inputs)
-		ground_truth_labels.append(training_data_stream.get_label(i))
-
-	vanilla_classifier = Digit_Classifier_Vanilla()
-	vanilla_classifier.train(50, inputs_vector, ground_truth_labels, 0.001)
-
-	# Predict the training data
-	print "Predict the training data: "
-	vanilla_classifier.predict(inputs_vector, ground_truth_labels)
-
-	print "Predict the test data: "
-	inputs_vector = []
-	ground_truth_labels = []
-	for i in range(500):
-		feature_inputs = test_data_stream.get_rounded_1d_image(i)
-		# augment the inputs with the bias term
-		feature_inputs.append(1)
-		inputs_vector.append(feature_inputs)
-		ground_truth_labels.append(test_data_stream.get_label(i))
-	vanilla_classifier.predict(inputs_vector, ground_truth_labels)
+	experiment_training_size(training_data_stream, test_data_stream, 500, 10000, 250, 50, 0.001)
 
 	return 0
 
 if __name__ == "__main__":
-	sys.setrecursionlimit(5000)
 	#sys.exit(int(main() or 0)) # use for when running without debugging
 	main() # use for when debugging within Visual Studio

@@ -13,11 +13,11 @@ class Digit_Classifier_Vanilla:
 
 	def train(self, number_epoch, inputs_vector, ground_truth_labels, l_rate=1.00):
 		for i in range(number_epoch):
-			print ("Epoch# ", i)
+			print ("Training Epoch # ", i)
 			for perceptron in self.perceptrons:
 				perceptron.train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate)
 
-	def predict(self, inputs_vector, ground_truth_labels):
+	def evaluate_f1_performance(self, inputs_vector, ground_truth_labels):
 
 		self.scorer.reset()
 		for inputs, label in zip(inputs_vector, ground_truth_labels):
@@ -25,14 +25,14 @@ class Digit_Classifier_Vanilla:
 			largest_w_dot_x_index = 0 # by default predict 0
 			for i in range(10):
 				w_dot_x = self.perceptrons[i].predict_w_dot_x(inputs)
-				print ("predicted w_dot_x: ", w_dot_x)
+				#print ("predicted w_dot_x: ", w_dot_x)
 				if w_dot_x > largest_w_dot_x:
 					largest_w_dot_x = w_dot_x
 					largest_w_dot_x_index = i
 			# prediction is stored in largest_w_dot_x_index
-			print ("predicted: ", largest_w_dot_x_index, "expected: ", label)
+			#print ("predicted: ", largest_w_dot_x_index, "expected: ", label)
 			self.scorer.record_result(label, largest_w_dot_x_index)
 
-		# report F1-Score
-		print "F1-score: ", self.scorer.get_macro_F1_score()
+		# return F1-Score
+		return self.scorer.get_macro_F1_score()
 

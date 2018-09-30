@@ -64,13 +64,117 @@ def experiment_training_size(
 			# augment the inputs with the bias term
 			feature_inputs.append(1)
 			inputs_vector.append(feature_inputs)
-			ground_truth_labels.append(test_data_stream.get_label(i))	
+			ground_truth_labels.append(test_data_stream.get_label(i))
 		# evaluate performance on the test data
 		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
 		plot_y_test_values.append(f1_score)
 
 	plot_performance(plot_x_values, plot_y_train_values, "Training size", "F1 Score", "Training_size_effect_on_training")
 	plot_performance(plot_x_values, plot_y_test_values, "Training size", "F1 Score", "Training_size_effect_on_test")
+
+
+def experiment_epoch_size(
+	training_data_stream,
+	test_data_stream,
+	epoch_size_initial, 
+	epoch_size_final, 
+	epoch_size_step, 
+	training_size, 
+	learning_rate):
+
+	inputs_vector = []
+	ground_truth_labels = []
+	plot_x_values = []
+	plot_y_train_values = []
+	plot_y_test_values = []
+
+	for epoch_size in range(epoch_size_initial, epoch_size_final, epoch_size_step):
+		
+		plot_x_values.append(epoch_size)
+		print ("Epoch size = ", epoch_size)
+
+		# build the training data stream
+		for i in range(training_size):
+			feature_inputs = training_data_stream.get_rounded_1d_image(i)
+			# augment the inputs with the bias term
+			feature_inputs.append(1)
+			inputs_vector.append(feature_inputs)
+			ground_truth_labels.append(training_data_stream.get_label(i))
+
+		# train the classifier using the data stream above
+		vanilla_classifier = Digit_Classifier_Vanilla()
+		vanilla_classifier.train(epoch_size, inputs_vector, ground_truth_labels, learning_rate)
+
+		# evaluate performance on the training data
+		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
+		plot_y_train_values.append(f1_score)
+
+		# evaluate performance on the test data
+		inputs_vector = []
+		ground_truth_labels = []
+		for i in range(training_size):
+			feature_inputs = test_data_stream.get_rounded_1d_image(i)
+			# augment the inputs with the bias term
+			feature_inputs.append(1)
+			inputs_vector.append(feature_inputs)
+			ground_truth_labels.append(test_data_stream.get_label(i))
+		# evaluate performance on the test data
+		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
+		plot_y_test_values.append(f1_score)
+
+	plot_performance(plot_x_values, plot_y_train_values, "Epoch size", "F1 Score", "Epoch_size_effect_on_training")
+	plot_performance(plot_x_values, plot_y_test_values, "Epoch size", "F1 Score", "Epoch_size_effect_on_test")
+
+def experiment_learning_rates(
+	training_data_stream,
+	test_data_stream,
+	learning_rates, 
+	training_size,
+	number_epoch):
+
+	inputs_vector = []
+	ground_truth_labels = []
+	plot_x_values = []
+	plot_y_train_values = []
+	plot_y_test_values = []
+
+	for learning_rate in learning_rates:
+		
+		plot_x_values.append(learning_rate)
+		print ("Learning Rate = ", learning_rate)
+
+		# build the training data stream
+		for i in range(training_size):
+			feature_inputs = training_data_stream.get_rounded_1d_image(i)
+			# augment the inputs with the bias term
+			feature_inputs.append(1)
+			inputs_vector.append(feature_inputs)
+			ground_truth_labels.append(training_data_stream.get_label(i))
+
+		# train the classifier using the data stream above
+		vanilla_classifier = Digit_Classifier_Vanilla()
+		vanilla_classifier.train(number_epoch, inputs_vector, ground_truth_labels, learning_rate)
+
+		# evaluate performance on the training data
+		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
+		plot_y_train_values.append(f1_score)
+
+		# evaluate performance on the test data
+		inputs_vector = []
+		ground_truth_labels = []
+		for i in range(training_size):
+			feature_inputs = test_data_stream.get_rounded_1d_image(i)
+			# augment the inputs with the bias term
+			feature_inputs.append(1)
+			inputs_vector.append(feature_inputs)
+			ground_truth_labels.append(test_data_stream.get_label(i))
+		# evaluate performance on the test data
+		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
+		plot_y_test_values.append(f1_score)
+
+	plot_performance(plot_x_values, plot_y_train_values, "Learning rate", "F1 Score", "Learning_rate_effect_on_training")
+	plot_performance(plot_x_values, plot_y_test_values, "Learning rate", "F1 Score", "Learning_rate_effect_on_test")
+
 
 def main():
 
@@ -100,6 +204,9 @@ def main():
 	#print "F1-Score: ", f1_scoring.get_macro_F1_score()
 
 	experiment_training_size(training_data_stream, test_data_stream, 500, 10000, 250, 50, 0.001)
+	experiment_epoch_size(training_data_stream, test_data_stream, 10, 100, 5, 10000, 0.001)
+	learning_rates[0.0001, 0.001, 0.01, 0.1]
+	experiment_learning_rates(training_data_stream, test_data_stream, learning_rates, 10000, 50)
 
 	return 0
 

@@ -19,8 +19,8 @@ def plot_performance(x_values, y_values_training, y_values_test, xlabel, ylabel,
 	plt.ylabel(ylabel)
 	plt.title(title)
 	plt.grid(True)
-	#plt.savefig(str(title) + ".png")
-	plt.show()
+	plt.savefig(str(title) + ".png")
+	#plt.show()
 
 def experiment_training_size(
 	training_data_stream,

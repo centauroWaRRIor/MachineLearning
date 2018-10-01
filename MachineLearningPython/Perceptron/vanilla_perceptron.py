@@ -1,9 +1,17 @@
 import sys
 import os
 import argparse
+import gzip
+import shutil
 
 from Perceptron.datastream import MNIST_Datastream
 from Perceptron.digit_classifier import Digit_Classifier_Vanilla
+
+def uncompress_file(abs_path, compress_filename, uncompress_filename):
+	with gzip.open(os.path.join(os.path.abspath(abs_path), compress_filename), 'rb') as f_in:
+		with open(os.path.join(os.path.abspath(abs_path), uncompress_filename), 'wb') as f_out:
+			shutil.copyfileobj(f_in, f_out)
+
 
 def main():
 
@@ -14,6 +22,12 @@ def main():
 	parser.add_argument('data_path', help="Path to data folder.")
 	argv = sys.argv[1:]
 	args = parser.parse_args(argv)
+
+	# extract gzip files
+	uncompress_file(args.data_path, "train-images-idx3-ubyte.gz", "train-images.idx3-ubyte")
+	uncompress_file(args.data_path, "train-labels-idx1-ubyte.gz", "train-labels.idx1-ubyte")
+	uncompress_file(args.data_path, "t10k-images-idx3-ubyte.gz", "t10k-images.idx3-ubyte")
+	uncompress_file(args.data_path, "t10k-labels-idx1-ubyte.gz", "t10k-labels.idx1-ubyte")
 	
 	images_filename_path = os.path.join(os.path.abspath(args.data_path), "train-images.idx3-ubyte")
 	labels_filename_path = os.path.join(os.path.abspath(args.data_path), "train-labels.idx1-ubyte")

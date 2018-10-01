@@ -2,13 +2,17 @@ import sys
 import os
 import argparse
 
+from Perceptron.datastream import MNIST_Datastream
+from Perceptron.digit_classifier import Digit_Classifier_Vanilla
+
 def main():
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('training_set_size', required=True, help="Size of training set.")
-	parser.add_argument('number_epochs', required=True, help="Number of epochs.")
-	parser.add_argument('learning_rate', required=True, help="Learning rate.")
-	parser.add_argument('data_path', required=True, help="Path to data folder.")
+	parser.add_argument('training_set_size', help="Size of training set.")
+	parser.add_argument('number_epochs', help="Number of epochs.")
+	parser.add_argument('learning_rate', help="Learning rate.")
+	parser.add_argument('data_path', help="Path to data folder.")
+	argv = sys.argv[1:]
 	args = parser.parse_args(argv)
 	
 	images_filename_path = os.path.join(os.path.abspath(args.data_path), "train-images.idx3-ubyte")
@@ -33,10 +37,10 @@ def main():
 	vanilla_classifier.train(int(args.number_epochs), inputs_vector, ground_truth_labels, float(args.learning_rate))
 
 	# Predict the training data
-	print "Predict the training data: "
-	vanilla_classifier.predict(inputs_vector, ground_truth_labels)
+	f1_macro_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
+	print "Training F1 Score: %.2f" % f1_macro_score
 
-	print "Predict the test data: "
+	# Predict the test data
 	inputs_vector = []
 	ground_truth_labels = []
 	for i in range(500):
@@ -45,7 +49,8 @@ def main():
 		feature_inputs.append(1)
 		inputs_vector.append(feature_inputs)
 		ground_truth_labels.append(test_data_stream.get_label(i))
-	vanilla_classifier.predict(inputs_vector, ground_truth_labels)
+	f1_macro_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
+	print "Test F1 Score: %.2f" % f1_macro_score
 
 	return 0
 

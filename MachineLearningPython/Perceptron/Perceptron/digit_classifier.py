@@ -11,9 +11,10 @@ class Digit_Classifier_Vanilla:
 			self.perceptrons.append(Vanilla_Perceptron(i))
 
 
-	def train(self, number_epoch, inputs_vector, ground_truth_labels, l_rate=1.00):
+	def train(self, number_epoch, inputs_vector, ground_truth_labels, l_rate=1.00, verbose=False):
 		for i in range(number_epoch):
-			print ("Training Epoch # ", i)
+			if verbose:
+				print "Training Epoch # %d" % i
 			for perceptron in self.perceptrons:
 				perceptron.train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate)
 

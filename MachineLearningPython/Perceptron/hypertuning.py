@@ -52,7 +52,7 @@ def experiment_training_size(
 
 		# train the classifier using the data stream above
 		vanilla_classifier = Digit_Classifier_Vanilla()
-		vanilla_classifier.train(number_epoch, inputs_vector, ground_truth_labels, learning_rate)
+		vanilla_classifier.train(number_epoch, inputs_vector, ground_truth_labels, learning_rate, True)
 
 		# evaluate performance on the training data
 		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
@@ -104,7 +104,7 @@ def experiment_epoch_size(
 
 		# train the classifier using the data stream above
 		vanilla_classifier = Digit_Classifier_Vanilla()
-		vanilla_classifier.train(epoch_size, inputs_vector, ground_truth_labels, learning_rate)
+		vanilla_classifier.train(epoch_size, inputs_vector, ground_truth_labels, learning_rate, True)
 
 		# evaluate performance on the training data
 		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
@@ -154,7 +154,7 @@ def experiment_learning_rates(
 
 		# train the classifier using the data stream above
 		vanilla_classifier = Digit_Classifier_Vanilla()
-		vanilla_classifier.train(number_epoch, inputs_vector, ground_truth_labels, learning_rate)
+		vanilla_classifier.train(number_epoch, inputs_vector, ground_truth_labels, learning_rate, True)
 
 		# evaluate performance on the training data
 		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
@@ -180,11 +180,11 @@ def main():
 
 	images_filename = "C:/Users/Emmauel/Desktop/CS_578/hw2/train-images-idx3-ubyte/train-images.idx3-ubyte"
 	labels_filename = "C:/Users/Emmauel/Desktop/CS_578/hw2/train-labels-idx1-ubyte/train-labels.idx1-ubyte"
-	training_data_stream = MNIST_Datastream(images_filename, labels_filename)
+	training_data_stream = MNIST_Datastream(images_filename, labels_filename, True)
 
 	images_filename = "C:/Users/Emmauel/Desktop/CS_578/hw2/t10k-images-idx3-ubyte/t10k-images.idx3-ubyte"
 	labels_filename = "C:/Users/Emmauel/Desktop/CS_578/hw2/t10k-labels-idx1-ubyte/t10k-labels.idx1-ubyte"
-	test_data_stream = MNIST_Datastream(images_filename, labels_filename)
+	test_data_stream = MNIST_Datastream(images_filename, labels_filename, True)
 
 	#image_python_array = training_data_stream.get_image(33)
 	#training_data_stream.ascii_show(image_python_array)

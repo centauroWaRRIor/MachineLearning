@@ -4,7 +4,7 @@ import numpy as np
 class MNIST_Datastream:
 	"""Simulates an infinite stream of examples"""
 
-	def __init__(self, images_filename, labels_filename):
+	def __init__(self, images_filename, labels_filename, verbose=False):
 
 		# open file
 		self.images_file = open(images_filename, 'rb')
@@ -19,11 +19,12 @@ class MNIST_Datastream:
 		#32-bit integer (4 bytes)
 		self.images_file.seek(4)
 		self.num_images = struct.unpack('>I', self.images_file.read(4))[0]
-		print "num images: ", self.num_images
-		self.num_rows = struct.unpack('>I', self.images_file.read(4))[0]
-		print "num rows: ", self.num_rows
+		self.num_rows = struct.unpack('>I', self.images_file.read(4))[0]		
 		self.num_columns = struct.unpack('>I', self.images_file.read(4))[0]
-		print "num columns: ", self.num_columns
+		if verbose:
+			print "num images: ", self.num_images
+			print "num rows: ", self.num_rows
+			print "num columns: ", self.num_columns
 
 		self.labels_file.seek(4)
 		assert(self.num_images == struct.unpack('>I', self.labels_file.read(4))[0])

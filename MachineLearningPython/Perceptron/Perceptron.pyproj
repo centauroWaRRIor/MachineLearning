@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>58045b9b-917d-4067-b35d-4adf8da791ee</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>vanilla_perceptron.py</StartupFile>
+    <StartupFile>winnow.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -25,6 +25,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="average_perceptron.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="hypertuning.py">
       <SubType>Code</SubType>
     </Compile>
@@ -42,6 +45,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Perceptron\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="winnow.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

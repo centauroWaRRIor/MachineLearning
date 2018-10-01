@@ -208,6 +208,8 @@ def main():
 	learning_rates[0.0001, 0.001, 0.01, 0.1]
 	experiment_learning_rates(training_data_stream, test_data_stream, learning_rates, 10000, 50)
 
+	# TODO: Shuffle the inputs
+
 	return 0
 
 if __name__ == "__main__":

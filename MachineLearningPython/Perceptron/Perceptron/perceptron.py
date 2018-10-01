@@ -64,8 +64,11 @@ class Average_Perceptron(Vanilla_Perceptron):
 	images once the vector has been flattened"""
 
 	def __init__(self, predict_label, init_random_weights=False):
-		Vanilla_Perceptron.__init__(ppredict_label, init_random_weights)
+		Vanilla_Perceptron.__init__(self, predict_label, init_random_weights)
 		self.average_weights = []
+		# initialize the average weights to zero
+		for i in range(self.num_features):
+			self.average_weights.append(0.0)
 
 	def train_weights_one_epoch(self, inputs_vector, ground_truth_labels, l_rate=1.00):
 
@@ -86,7 +89,8 @@ class Average_Perceptron(Vanilla_Perceptron):
 				# keep running average to approximate multiple hypothesis voting
 				self.average_weights[i] = self.average_weights[i] + self.weights[i]
 
-	def predict_average_w_dot_x(self, inputs):
+	def predict_w_dot_x(self, inputs):
+		"""Overrides base's method by using average weights to predict instead of regular ones"""
 
 		assert(len(inputs) == len(self.average_weights))
 		
@@ -106,8 +110,10 @@ class Vanilla_Winnow(Vanilla_Perceptron):
 	images once the vector has been flattened"""
 
 	def __init__(self, predict_label, init_random_weights=False):
-		Vanilla_Perceptron.__init__(ppredict_label, init_random_weights)
-		self.average_weights = []
+		Vanilla_Perceptron.__init__(self, predict_label, init_random_weights)
+		# reinitialize weights to 1.0
+		for i in range(self.num_features):
+			self.weights[i] = 1.0
 
 	def train_weights_one_epoch(self, inputs_vector, ground_truth_labels, l_rate=1.00):
 

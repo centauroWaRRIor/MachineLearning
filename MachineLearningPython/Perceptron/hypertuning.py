@@ -218,6 +218,8 @@ def main():
 	#experiment_learning_rates(training_data_stream, test_data_stream, learning_rates, 10000, 50)
 
 	# TODO: Shuffle the inputs
+	# MAke sure all the experiment works
+	# Make sure the experiments are compatible with all types of perceptrons
 
 	return 0
 

@@ -5,7 +5,7 @@ import gzip
 import shutil
 
 from Perceptron.datastream import MNIST_Datastream
-from Perceptron.digit_classifier import Digit_Classifier_Vanilla
+from Perceptron.digit_classifier import Digit_Classifier
 
 def uncompress_file(abs_path, compress_filename, uncompress_filename):
 	with gzip.open(os.path.join(os.path.abspath(abs_path), compress_filename), 'rb') as f_in:
@@ -14,7 +14,6 @@ def uncompress_file(abs_path, compress_filename, uncompress_filename):
 
 
 def main():
-
 	parser = argparse.ArgumentParser()
 	parser.add_argument('training_set_size', help="Size of training set.")
 	parser.add_argument('number_epochs', help="Number of epochs.")
@@ -47,7 +46,7 @@ def main():
 		inputs_vector.append(feature_inputs)
 		ground_truth_labels.append(training_data_stream.get_label(i))
 
-	vanilla_classifier = Digit_Classifier_Vanilla()
+	vanilla_classifier = Digit_Classifier("Vanilla_Perceptron")
 	vanilla_classifier.train(int(args.number_epochs), inputs_vector, ground_truth_labels, float(args.learning_rate))
 
 	# Predict the training data

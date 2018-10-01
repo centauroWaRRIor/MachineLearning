@@ -1,14 +1,21 @@
 from score import Classifier_Score
 from perceptron import Vanilla_Perceptron
+from perceptron import Average_Perceptron
+from perceptron import Vanilla_Winnow
 
-class Digit_Classifier_Vanilla:
+class Digit_Classifier:
 	"""10 vanilla perceptrons, each one trained to recognize one digit"""
 		
-	def __init__(self):
+	def __init__(self, perceptron_type):
 		self.scorer = Classifier_Score()
 		self.perceptrons = []
 		for i in range(10):
-			self.perceptrons.append(Vanilla_Perceptron(i))
+			if perceptron_type == "Vanilla_Perceptron":
+				self.perceptrons.append(Vanilla_Perceptron(i))
+			elif perceptron_type == "Average_Perceptron":
+				self.perceptrons.append(Average_Perceptron(i))
+			elif perceptron_type == "Winnow_Perceptron":
+				self.perceptrons.append(Vanilla_Winnow(i))
 
 
 	def train(self, number_epoch, inputs_vector, ground_truth_labels, l_rate=1.00, verbose=False):

@@ -3,7 +3,7 @@ import numpy
 import matplotlib.pyplot as plt
 
 from Perceptron.datastream import MNIST_Datastream
-from Perceptron.digit_classifier import Digit_Classifier_Vanilla
+from Perceptron.digit_classifier import Digit_Classifier
 
 def plot_performance(x_values, y_values_training, y_values_test, xlabel, ylabel, title):
 
@@ -51,7 +51,7 @@ def experiment_training_size(
 			ground_truth_labels.append(training_data_stream.get_label(i))
 
 		# train the classifier using the data stream above
-		vanilla_classifier = Digit_Classifier_Vanilla()
+		vanilla_classifier = Digit_Classifier("Vanilla_Perceptron")
 		vanilla_classifier.train(number_epoch, inputs_vector, ground_truth_labels, learning_rate, True)
 
 		# evaluate performance on the training data
@@ -103,7 +103,7 @@ def experiment_epoch_size(
 			ground_truth_labels.append(training_data_stream.get_label(i))
 
 		# train the classifier using the data stream above
-		vanilla_classifier = Digit_Classifier_Vanilla()
+		vanilla_classifier = Digit_Classifier("Vanilla_Perceptron")
 		vanilla_classifier.train(epoch_size, inputs_vector, ground_truth_labels, learning_rate, True)
 
 		# evaluate performance on the training data
@@ -153,7 +153,7 @@ def experiment_learning_rates(
 			ground_truth_labels.append(training_data_stream.get_label(i))
 
 		# train the classifier using the data stream above
-		vanilla_classifier = Digit_Classifier_Vanilla()
+		vanilla_classifier = Digit_Classifier("Vanilla_Perceptron")
 		vanilla_classifier.train(number_epoch, inputs_vector, ground_truth_labels, learning_rate, True)
 
 		# evaluate performance on the training data

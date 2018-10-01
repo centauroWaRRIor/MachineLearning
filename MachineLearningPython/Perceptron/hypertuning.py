@@ -1,4 +1,5 @@
 import sys
+import os
 import numpy
 import matplotlib.pyplot as plt
 
@@ -7,13 +8,15 @@ from Perceptron.digit_classifier import Digit_Classifier
 
 def plot_performance(x_values, y_values_training, y_values_test, xlabel, ylabel, title):
 
+	#plt.ioff()
 	s = numpy.array(x_values)
 	# plot training data
 	t = numpy.array(y_values_training)
-	plt.plot(s, t)
+	plt.plot(s, t, label="Training")
 	# plot test data
 	t = numpy.array(y_values_test)
-	plt.plot(s, t)
+	plt.plot(s, t, label="Test")
+	plt.legend()
 
 	plt.xlabel(xlabel)
 	plt.ylabel(ylabel)
@@ -40,7 +43,7 @@ def experiment_training_size(
 	for training_size in range(training_size_initial, training_size_final, training_size_step):
 		
 		plot_x_values.append(training_size)
-		print ("Training size = ", training_size)
+		print "Training size = %d" % training_size
 
 		# build the training data stream
 		for i in range(training_size):
@@ -92,7 +95,7 @@ def experiment_epoch_size(
 	for epoch_size in range(epoch_size_initial, epoch_size_final, epoch_size_step):
 		
 		plot_x_values.append(epoch_size)
-		print ("Epoch size = ", epoch_size)
+		print "Epoch size = %d" % epoch_size
 
 		# build the training data stream
 		for i in range(training_size):
@@ -142,7 +145,7 @@ def experiment_learning_rates(
 	for learning_rate in learning_rates:
 		
 		plot_x_values.append(learning_rate)
-		print ("Learning Rate = ", learning_rate)
+		print "Learning Rate = %d" % learning_rate
 
 		# build the training data stream
 		for i in range(training_size):
@@ -178,13 +181,14 @@ def experiment_learning_rates(
 
 def main():
 
-	images_filename = "C:/Users/Emmauel/Desktop/CS_578/hw2/train-images-idx3-ubyte/train-images.idx3-ubyte"
-	labels_filename = "C:/Users/Emmauel/Desktop/CS_578/hw2/train-labels-idx1-ubyte/train-labels.idx1-ubyte"
-	training_data_stream = MNIST_Datastream(images_filename, labels_filename, True)
+	data_path = "C:\Users\Emmauel\Desktop\CS_578\hw2\data"
+	images_filename_path = os.path.join(os.path.abspath(data_path), "train-images.idx3-ubyte")
+	labels_filename_path = os.path.join(os.path.abspath(data_path), "train-labels.idx1-ubyte")
+	training_data_stream = MNIST_Datastream(images_filename_path, labels_filename_path, True)
 
-	images_filename = "C:/Users/Emmauel/Desktop/CS_578/hw2/t10k-images-idx3-ubyte/t10k-images.idx3-ubyte"
-	labels_filename = "C:/Users/Emmauel/Desktop/CS_578/hw2/t10k-labels-idx1-ubyte/t10k-labels.idx1-ubyte"
-	test_data_stream = MNIST_Datastream(images_filename, labels_filename, True)
+	images_filename_path = os.path.join(os.path.abspath(data_path), "t10k-images.idx3-ubyte")
+	labels_filename_path = os.path.join(os.path.abspath(data_path), "t10k-labels.idx1-ubyte")
+	test_data_stream = MNIST_Datastream(images_filename_path, labels_filename_path, True)
 
 	#image_python_array = training_data_stream.get_image(33)
 	#training_data_stream.ascii_show(image_python_array)
@@ -203,10 +207,15 @@ def main():
 	#	f1_scoring.record_result(true, pred)
 	#print "F1-Score: ", f1_scoring.get_macro_F1_score()
 
-	experiment_training_size(training_data_stream, test_data_stream, 500, 10000, 250, 50, 0.001)
-	experiment_epoch_size(training_data_stream, test_data_stream, 10, 100, 5, 10000, 0.001)
-	learning_rates[0.0001, 0.001, 0.01, 0.1]
-	experiment_learning_rates(training_data_stream, test_data_stream, learning_rates, 10000, 50)
+	#experiment_training_size(training_data_stream, test_data_stream, 500, 10000, 250, 50, 0.001)
+	#experiment_epoch_size(training_data_stream, test_data_stream, 10, 100, 5, 10000, 0.001)
+	#learning_rates[0.0001, 0.001, 0.01, 0.1]
+	#experiment_learning_rates(training_data_stream, test_data_stream, learning_rates, 10000, 50)
+
+	experiment_training_size(training_data_stream, test_data_stream, 500, 600, 25, 25, 0.01)
+	#experiment_epoch_size(training_data_stream, test_data_stream, 10, 100, 5, 10000, 0.001)
+	#learning_rates[0.0001, 0.001, 0.01, 0.1]
+	#experiment_learning_rates(training_data_stream, test_data_stream, learning_rates, 10000, 50)
 
 	# TODO: Shuffle the inputs
 

@@ -6,9 +6,8 @@ import matplotlib.pyplot as plt
 from Perceptron.datastream import MNIST_Datastream
 from Perceptron.digit_classifier import Digit_Classifier
 
-def plot_performance(x_values, y_values_training, y_values_test, xlabel, ylabel, title):
+def plot_train_vs_test_performance(x_values, y_values_training, y_values_test, xlabel, ylabel, title):
 
-	#plt.ioff()
 	s = numpy.array(x_values)
 	# plot training data
 	t = numpy.array(y_values_training)
@@ -18,6 +17,18 @@ def plot_performance(x_values, y_values_training, y_values_test, xlabel, ylabel,
 	plt.plot(s, t, label="Test")
 	plt.legend()
 
+	plt.xlabel(xlabel)
+	plt.ylabel(ylabel)
+	plt.title(title)
+	plt.grid(True)
+	plt.savefig(str(title) + ".png")
+	#plt.show()
+
+def plot_performance(x_values, y_values, xlabel, ylabel, title):
+
+	s = numpy.array(x_values)
+	t = numpy.array(y_values)
+	plt.plot(s, t)
 	plt.xlabel(xlabel)
 	plt.ylabel(ylabel)
 	plt.title(title)
@@ -74,7 +85,9 @@ def experiment_training_size(
 		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
 		plot_y_test_values.append(f1_score)
 
-	plot_performance(plot_x_values, plot_y_train_values, plot_y_test_values, "Training size", "F1 Score", "Training_size_effect_on_training_and_test")
+	plot_train_vs_test_performance(plot_x_values, plot_y_train_values, plot_y_test_values, "Training size", "F1 Score", "Training_size_effect_on_training_and_test")
+	plot_performance(plot_x_values, plot_y_train_values, "Training size", "F1 Score", "Training_size_effect_on_training")
+	plot_performance(plot_x_values, plot_y_test_values, "Training size", "F1 Score", "Training_size_effect_on_test")
 
 
 def experiment_epoch_size(
@@ -126,7 +139,9 @@ def experiment_epoch_size(
 		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
 		plot_y_test_values.append(f1_score)
 
-	plot_performance(plot_x_values, plot_y_train_values, plot_y_test_values, "Epoch size", "F1 Score", "Epoch_size_effect_on_training_and_test")
+	plot_train_vs_test_performance(plot_x_values, plot_y_train_values, plot_y_test_values, "Epoch size", "F1 Score", "Epoch_size_effect_on_training_and_test")
+	plot_performance(plot_x_values, plot_y_train_values, "Epoch size", "F1 Score", "Epoch_size_effect_on_training")
+	plot_performance(plot_x_values, plot_y_test_values, "Epoch size", "F1 Score", "Epoch_size_effect_on_test")
 
 
 def experiment_learning_rates(
@@ -145,7 +160,7 @@ def experiment_learning_rates(
 	for learning_rate in learning_rates:
 		
 		plot_x_values.append(learning_rate)
-		print "Learning Rate = %d" % learning_rate
+		print "Learning Rate = %f" % learning_rate
 
 		# build the training data stream
 		for i in range(training_size):
@@ -176,7 +191,9 @@ def experiment_learning_rates(
 		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
 		plot_y_test_values.append(f1_score)
 
-	plot_performance(plot_x_values, plot_y_train_values, plot_y_test_values, "Learning rate", "F1 Score", "Learning_rate_effect_on_training_and_test")
+	plot_train_vs_test_performance(plot_x_values, plot_y_train_values, plot_y_test_values, "Learning rate", "F1 Score", "Learning_rate_effect_on_training_and_test")
+	plot_performance(plot_x_values, plot_y_train_values, "Learning rate", "F1 Score", "Learning_rate_effect_on_training")
+	plot_performance(plot_x_values, plot_y_test_values, "Learning rate", "F1 Score", "Learning_rate_effect_on_test")
 
 
 def main():
@@ -212,10 +229,10 @@ def main():
 	#learning_rates[0.0001, 0.001, 0.01, 0.1]
 	#experiment_learning_rates(training_data_stream, test_data_stream, learning_rates, 10000, 50)
 
-	experiment_training_size(training_data_stream, test_data_stream, 500, 600, 25, 25, 0.01)
-	#experiment_epoch_size(training_data_stream, test_data_stream, 10, 100, 5, 10000, 0.001)
-	#learning_rates[0.0001, 0.001, 0.01, 0.1]
-	#experiment_learning_rates(training_data_stream, test_data_stream, learning_rates, 10000, 50)
+	#experiment_training_size(training_data_stream, test_data_stream, 500, 600, 25, 25, 0.01)
+	#experiment_epoch_size(training_data_stream, test_data_stream, 10, 100, 25, 500, 0.001)
+	learning_rates = [0.0001, 0.001, 0.01, 0.1]
+	experiment_learning_rates(training_data_stream, test_data_stream, learning_rates, 500, 25)
 
 	# TODO: Shuffle the inputs
 	# MAke sure all the experiment works

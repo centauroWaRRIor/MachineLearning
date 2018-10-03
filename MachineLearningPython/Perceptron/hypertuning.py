@@ -8,6 +8,7 @@ from Perceptron.digit_classifier import Digit_Classifier
 
 def plot_train_vs_test_performance(x_values, y_values_training, y_values_test, xlabel, ylabel, title):
 
+	plt.figure()
 	s = numpy.array(x_values)
 	# plot training data
 	t = numpy.array(y_values_training)
@@ -26,6 +27,7 @@ def plot_train_vs_test_performance(x_values, y_values_training, y_values_test, x
 
 def plot_performance(x_values, y_values, xlabel, ylabel, title):
 
+	plt.figure()
 	s = numpy.array(x_values)
 	t = numpy.array(y_values)
 	plt.plot(s, t)
@@ -37,6 +39,7 @@ def plot_performance(x_values, y_values, xlabel, ylabel, title):
 	#plt.show()
 
 def experiment_training_size(
+	classifier_type,
 	training_data_stream,
 	test_data_stream,
 	training_size_initial, 
@@ -65,11 +68,11 @@ def experiment_training_size(
 			ground_truth_labels.append(training_data_stream.get_label(i))
 
 		# train the classifier using the data stream above
-		vanilla_classifier = Digit_Classifier("Vanilla_Perceptron")
-		vanilla_classifier.train(number_epoch, inputs_vector, ground_truth_labels, learning_rate, True)
+		digit_classifier = Digit_Classifier(classifier_type)
+		digit_classifier.train(number_epoch, inputs_vector, ground_truth_labels, learning_rate, True)
 
 		# evaluate performance on the training data
-		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
+		f1_score = digit_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
 		plot_y_train_values.append(f1_score)
 
 		# evaluate performance on the test data
@@ -82,15 +85,16 @@ def experiment_training_size(
 			inputs_vector.append(feature_inputs)
 			ground_truth_labels.append(test_data_stream.get_label(i))
 		# evaluate performance on the test data
-		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
+		f1_score = digit_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
 		plot_y_test_values.append(f1_score)
 
-	plot_train_vs_test_performance(plot_x_values, plot_y_train_values, plot_y_test_values, "Training size", "F1 Score", "Training_size_effect_on_training_and_test")
-	plot_performance(plot_x_values, plot_y_train_values, "Training size", "F1 Score", "Training_size_effect_on_training")
-	plot_performance(plot_x_values, plot_y_test_values, "Training size", "F1 Score", "Training_size_effect_on_test")
+	plot_train_vs_test_performance(plot_x_values, plot_y_train_values, plot_y_test_values, "Training size", "F1 Score", "Training_size_effect_on_training_and_test - " + classifier_type)
+	plot_performance(plot_x_values, plot_y_train_values, "Training size", "F1 Score", "Training_size_effect_on_training - " + classifier_type)
+	plot_performance(plot_x_values, plot_y_test_values, "Training size", "F1 Score", "Training_size_effect_on_test - " + classifier_type)
 
 
 def experiment_epoch_size(
+	classifier_type,
 	training_data_stream,
 	test_data_stream,
 	epoch_size_initial, 
@@ -119,11 +123,11 @@ def experiment_epoch_size(
 			ground_truth_labels.append(training_data_stream.get_label(i))
 
 		# train the classifier using the data stream above
-		vanilla_classifier = Digit_Classifier("Vanilla_Perceptron")
-		vanilla_classifier.train(epoch_size, inputs_vector, ground_truth_labels, learning_rate, True)
+		digit_classifier = Digit_Classifier(classifier_type)
+		digit_classifier.train(epoch_size, inputs_vector, ground_truth_labels, learning_rate, True)
 
 		# evaluate performance on the training data
-		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
+		f1_score = digit_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
 		plot_y_train_values.append(f1_score)
 
 		# evaluate performance on the test data
@@ -136,15 +140,16 @@ def experiment_epoch_size(
 			inputs_vector.append(feature_inputs)
 			ground_truth_labels.append(test_data_stream.get_label(i))
 		# evaluate performance on the test data
-		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
+		f1_score = digit_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
 		plot_y_test_values.append(f1_score)
 
-	plot_train_vs_test_performance(plot_x_values, plot_y_train_values, plot_y_test_values, "Epoch size", "F1 Score", "Epoch_size_effect_on_training_and_test")
-	plot_performance(plot_x_values, plot_y_train_values, "Epoch size", "F1 Score", "Epoch_size_effect_on_training")
-	plot_performance(plot_x_values, plot_y_test_values, "Epoch size", "F1 Score", "Epoch_size_effect_on_test")
+	plot_train_vs_test_performance(plot_x_values, plot_y_train_values, plot_y_test_values, "Epoch size", "F1 Score", "Epoch_size_effect_on_training_and_test - " + classifier_type)
+	plot_performance(plot_x_values, plot_y_train_values, "Epoch size", "F1 Score", "Epoch_size_effect_on_training - " + classifier_type)
+	plot_performance(plot_x_values, plot_y_test_values, "Epoch size", "F1 Score", "Epoch_size_effect_on_test - " + classifier_type)
 
 
 def experiment_learning_rates(
+	classifier_type,
 	training_data_stream,
 	test_data_stream,
 	learning_rates, 
@@ -171,11 +176,11 @@ def experiment_learning_rates(
 			ground_truth_labels.append(training_data_stream.get_label(i))
 
 		# train the classifier using the data stream above
-		vanilla_classifier = Digit_Classifier("Vanilla_Perceptron")
-		vanilla_classifier.train(number_epoch, inputs_vector, ground_truth_labels, learning_rate, True)
+		digit_classifier = Digit_Classifier(classifier_type)
+		digit_classifier.train(number_epoch, inputs_vector, ground_truth_labels, learning_rate, True)
 
 		# evaluate performance on the training data
-		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
+		f1_score = digit_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
 		plot_y_train_values.append(f1_score)
 
 		# evaluate performance on the test data
@@ -188,12 +193,12 @@ def experiment_learning_rates(
 			inputs_vector.append(feature_inputs)
 			ground_truth_labels.append(test_data_stream.get_label(i))
 		# evaluate performance on the test data
-		f1_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
+		f1_score = digit_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
 		plot_y_test_values.append(f1_score)
 
-	plot_train_vs_test_performance(plot_x_values, plot_y_train_values, plot_y_test_values, "Learning rate", "F1 Score", "Learning_rate_effect_on_training_and_test")
-	plot_performance(plot_x_values, plot_y_train_values, "Learning rate", "F1 Score", "Learning_rate_effect_on_training")
-	plot_performance(plot_x_values, plot_y_test_values, "Learning rate", "F1 Score", "Learning_rate_effect_on_test")
+	plot_train_vs_test_performance(plot_x_values, plot_y_train_values, plot_y_test_values, "Learning rate", "F1 Score", "Learning_rate_effect_on_training_and_test - " + classifier_type)
+	plot_performance(plot_x_values, plot_y_train_values, "Learning rate", "F1 Score", "Learning_rate_effect_on_training - " + classifier_type)
+	plot_performance(plot_x_values, plot_y_test_values, "Learning rate", "F1 Score", "Learning_rate_effect_on_test - " + classifier_type)
 
 
 def main():
@@ -224,19 +229,31 @@ def main():
 	#	f1_scoring.record_result(true, pred)
 	#print "F1-Score: ", f1_scoring.get_macro_F1_score()
 
-	#experiment_training_size(training_data_stream, test_data_stream, 500, 10000, 250, 50, 0.001)
-	#experiment_epoch_size(training_data_stream, test_data_stream, 10, 100, 5, 10000, 0.001)
-	#learning_rates[0.0001, 0.001, 0.01, 0.1]
-	#experiment_learning_rates(training_data_stream, test_data_stream, learning_rates, 10000, 50)
+	# Vanilla perceptron hyper parameters search
+	experiment_training_size("Vanilla_Perceptron", training_data_stream, test_data_stream, 500, 10000, 250, 50, 0.001)
+	experiment_epoch_size("Vanilla_Perceptron", training_data_stream, test_data_stream, 10, 100, 5, 10000, 0.001)
+	learning_rates[0.0001, 0.001, 0.01, 0.1]
+	experiment_learning_rates("Vanilla_Perceptron", training_data_stream, test_data_stream, learning_rates, 10000, 50)
 
-	#experiment_training_size(training_data_stream, test_data_stream, 500, 600, 25, 25, 0.01)
-	#experiment_epoch_size(training_data_stream, test_data_stream, 10, 100, 25, 500, 0.001)
-	learning_rates = [0.0001, 0.001, 0.01, 0.1]
-	experiment_learning_rates(training_data_stream, test_data_stream, learning_rates, 500, 25)
+	# Average perceptron hyper parameters search
+	experiment_training_size("Average_Perceptron", training_data_stream, test_data_stream, 500, 10000, 250, 50, 0.001)
+	experiment_epoch_size("Average_Perceptron", training_data_stream, test_data_stream, 10, 100, 5, 10000, 0.001)
+	learning_rates[0.0001, 0.001, 0.01, 0.1]
+	experiment_learning_rates("Average_Perceptron", training_data_stream, test_data_stream, learning_rates, 10000, 50)
+
+	# Winnow hyper parameters search
+	experiment_training_size("Winnow_Perceptron", training_data_stream, test_data_stream, 500, 10000, 250, 50, 0.001)
+	experiment_epoch_size("Winnow_Perceptron", training_data_stream, test_data_stream, 10, 100, 5, 10000, 0.001)
+	learning_rates[0.0001, 0.001, 0.01, 0.1]
+	experiment_learning_rates("Winnow_Perceptron", training_data_stream, test_data_stream, learning_rates, 10000, 50)
+
+	# small experiment for debugging this code
+	#experiment_training_size("Average_Perceptron", training_data_stream, test_data_stream, 500, 600, 25, 25, 0.01)
+	#experiment_epoch_size("Average_Perceptron", training_data_stream, test_data_stream, 10, 100, 25, 500, 0.001)
+	#learning_rates = [0.0001, 0.001, 0.01, 0.1]
+	#experiment_learning_rates("Average_Perceptron", training_data_stream, test_data_stream, learning_rates, 500, 25)
 
 	# TODO: Shuffle the inputs
-	# MAke sure all the experiment works
-	# Make sure the experiments are compatible with all types of perceptrons
 
 	return 0
 

@@ -230,22 +230,21 @@ def main():
 	#print "F1-Score: ", f1_scoring.get_macro_F1_score()
 
 	# Vanilla perceptron hyper parameters search
-	experiment_training_size("Vanilla_Perceptron", training_data_stream, test_data_stream, 500, 10000, 250, 50, 0.001)
-	experiment_epoch_size("Vanilla_Perceptron", training_data_stream, test_data_stream, 10, 100, 5, 10000, 0.001)
-	learning_rates[0.0001, 0.001, 0.01, 0.1]
+	# completed experiment_training_size("Vanilla_Perceptron", training_data_stream, test_data_stream, 500, 10000, 250, 50, 0.001)
+	# completed experiment_epoch_size("Vanilla_Perceptron", training_data_stream, test_data_stream, 10, 100, 5, 10000, 0.001)
+	learning_rates = [0.0001, 0.001, 0.01, 0.1]
 	experiment_learning_rates("Vanilla_Perceptron", training_data_stream, test_data_stream, learning_rates, 10000, 50)
 
 	# Average perceptron hyper parameters search
 	experiment_training_size("Average_Perceptron", training_data_stream, test_data_stream, 500, 10000, 250, 50, 0.001)
 	experiment_epoch_size("Average_Perceptron", training_data_stream, test_data_stream, 10, 100, 5, 10000, 0.001)
-	learning_rates[0.0001, 0.001, 0.01, 0.1]
+	learning_rates = [0.0001, 0.001, 0.01, 0.1]
 	experiment_learning_rates("Average_Perceptron", training_data_stream, test_data_stream, learning_rates, 10000, 50)
 
 	# Winnow hyper parameters search
 	experiment_training_size("Winnow_Perceptron", training_data_stream, test_data_stream, 500, 10000, 250, 50, 0.001)
 	experiment_epoch_size("Winnow_Perceptron", training_data_stream, test_data_stream, 10, 100, 5, 10000, 0.001)
-	learning_rates[0.0001, 0.001, 0.01, 0.1]
-	experiment_learning_rates("Winnow_Perceptron", training_data_stream, test_data_stream, learning_rates, 10000, 50)
+	# I did not implement winnow with learning rates factor so no point in tuning this parameter
 
 	# small experiment for debugging this code
 	#experiment_training_size("Average_Perceptron", training_data_stream, test_data_stream, 500, 600, 25, 25, 0.01)

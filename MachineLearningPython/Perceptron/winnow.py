@@ -17,7 +17,6 @@ def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('training_set_size', help="Size of training set.")
 	parser.add_argument('number_epochs', help="Number of epochs.")
-	parser.add_argument('learning_rate', help="Learning rate.")
 	parser.add_argument('data_path', help="Path to data folder.")
 	argv = sys.argv[1:]
 	args = parser.parse_args(argv)
@@ -47,7 +46,7 @@ def main():
 		ground_truth_labels.append(training_data_stream.get_label(i))
 
 	vanilla_classifier = Digit_Classifier("Winnow_Perceptron")
-	vanilla_classifier.train(int(args.number_epochs), inputs_vector, ground_truth_labels, float(args.learning_rate))
+	vanilla_classifier.train(int(args.number_epochs), inputs_vector, ground_truth_labels)
 
 	# Predict the training data
 	f1_macro_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)

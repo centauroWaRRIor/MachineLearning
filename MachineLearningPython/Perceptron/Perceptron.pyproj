@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>58045b9b-917d-4067-b35d-4adf8da791ee</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>winnow.py</StartupFile>
+    <StartupFile>average_perceptron.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

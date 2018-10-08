@@ -56,7 +56,7 @@ def main():
 	# Predict the test data
 	inputs_vector = []
 	ground_truth_labels = []
-	for i in range(500):
+	for i in range(test_data_stream.num_images):
 		feature_inputs = test_data_stream.get_rounded_1d_image(i)
 		# augment the inputs with the bias term
 		feature_inputs.append(1)
@@ -68,6 +68,6 @@ def main():
 	return 0
 
 if __name__ == "__main__":
-	#sys.exit(int(main() or 0)) # use for when running without debugging
-	main() # use for when debugging within Visual Studio
+	sys.exit(int(main() or 0)) # use for when running without debugging
+	#main() # use for when debugging within Visual Studio
 

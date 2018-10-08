@@ -203,7 +203,8 @@ def experiment_learning_rates(
 
 def main():
 
-	data_path = "C:\Users\Emmauel\Desktop\CS_578\hw2\data"
+	#data_path = "C:\Users\Emmauel\Desktop\CS_578\hw2\data"
+	data_path = "C:\cs_homework"
 	images_filename_path = os.path.join(os.path.abspath(data_path), "train-images.idx3-ubyte")
 	labels_filename_path = os.path.join(os.path.abspath(data_path), "train-labels.idx1-ubyte")
 	training_data_stream = MNIST_Datastream(images_filename_path, labels_filename_path, True)
@@ -232,11 +233,11 @@ def main():
 	# Vanilla perceptron hyper parameters search
 	# completed experiment_training_size("Vanilla_Perceptron", training_data_stream, test_data_stream, 500, 10000, 250, 50, 0.001)
 	# completed experiment_epoch_size("Vanilla_Perceptron", training_data_stream, test_data_stream, 10, 100, 5, 10000, 0.001)
-	learning_rates = [0.0001, 0.001, 0.01, 0.1]
-	experiment_learning_rates("Vanilla_Perceptron", training_data_stream, test_data_stream, learning_rates, 10000, 50)
+	#learning_rates = [0.0001, 0.001, 0.01, 0.1]
+	#experiment_learning_rates("Vanilla_Perceptron", training_data_stream, test_data_stream, learning_rates, 10000, 50)
 
 	# Average perceptron hyper parameters search
-	experiment_training_size("Average_Perceptron", training_data_stream, test_data_stream, 500, 10000, 250, 50, 0.001)
+	#experiment_training_size("Average_Perceptron", training_data_stream, test_data_stream, 500, 10000, 250, 50, 0.001)
 	experiment_epoch_size("Average_Perceptron", training_data_stream, test_data_stream, 10, 100, 5, 10000, 0.001)
 	learning_rates = [0.0001, 0.001, 0.01, 0.1]
 	experiment_learning_rates("Average_Perceptron", training_data_stream, test_data_stream, learning_rates, 10000, 50)

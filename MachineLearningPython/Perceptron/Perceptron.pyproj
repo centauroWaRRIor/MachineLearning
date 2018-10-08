@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>58045b9b-917d-4067-b35d-4adf8da791ee</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>hypertuning.py</StartupFile>
+    <StartupFile>winnow.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -13,8 +13,9 @@
     <RootNamespace>Perceptron</RootNamespace>
     <InterpreterId>Global|PythonCore|2.7</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>1000 20 0.001 C:\Users\Emmauel\Desktop\CS_578\hw2\data</CommandLineArguments>
+    <CommandLineArguments>1500 40 0.0001 C:\cs_homework</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
+    <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

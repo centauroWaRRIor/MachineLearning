@@ -55,14 +55,6 @@ class MNIST_Datastream:
 		return image_numpy_array.tolist()
 
 
-	def get_rounded_image(self, image_index):
-
-		image = self.get_image(image_index)
-		for i in range(self.num_rows):
-			for j in range(self.num_columns):
-				image[i][j] = int(round(image[i][j]/255.0))
-		return image
-
 	def get_1d_image(self, image_index):
 
 		file_offset = 16 + image_index * self.image_bytes
@@ -72,12 +64,13 @@ class MNIST_Datastream:
 		return image_numpy_array.tolist()
 
 
-	def get_rounded_1d_image(self, image_index):
+	def get_scaled_1d_image(self, image_index):
 
 		image = self.get_1d_image(image_index)
+		scaled_image_float = []
 		for i in range(self.num_rows * self.num_columns):
-			image[i] = int(round(image[i]/255.0))
-		return image
+			scaled_image_float.append(image[i]/255.0)
+		return scaled_image_float
 
 
 	def ascii_show(self, image):

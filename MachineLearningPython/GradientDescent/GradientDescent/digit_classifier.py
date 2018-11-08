@@ -17,13 +17,15 @@ class Digit_Classifier:
 		self.classifier = Batch_Gradient_Descent(5, True)
 
 
-	def train(self, number_epoch, inputs_vector, ground_truth_labels, l_rate=1.00, verbose=False):
+	def train(self, number_epoch, inputs_vector, ground_truth_labels, l_rate, lambda_value, verbose=False):
 		for i in range(number_epoch):
 			if verbose:
 				print "Training Epoch # %d" % i
 			#for perceptron in self.perceptrons:
 			#	perceptron.train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate)
-			self.classifier.train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate)
+			self.classifier.train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate, lambda_value)
+			error = self.classifier.calc_error(inputs_vector, ground_truth_labels, l_rate, lambda_value)
+			print error
 
 	#def evaluate_f1_performance(self, inputs_vector, ground_truth_labels):
 

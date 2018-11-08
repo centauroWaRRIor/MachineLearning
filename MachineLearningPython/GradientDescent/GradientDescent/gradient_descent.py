@@ -1,3 +1,6 @@
+import random
+import math
+
 class Batch_Gradient_Descent:
 	""" Vanilla implementation of a batch GD with 784 features + bias.
 	The 784 inputs come directly from MNIST hand written images once the vector
@@ -16,8 +19,8 @@ class Batch_Gradient_Descent:
 				self.weights.append(0.0)
 			self.delta_weights.append(0.0)
 
-	def sigmoid_activation(z):
-		return 1 / (1 + math.exp(-z))
+	def sigmoid_activation(self, z):
+		return 1.0 / (1.0 + math.exp(-z))
 
 	def predict(self, inputs, predict_activation):
 		""" If predict activation is false, this function
@@ -31,7 +34,7 @@ class Batch_Gradient_Descent:
 			w_dot_x += inputs[i] * self.weights[i] 
 
 		# the sigmoid function is defined over the range y=[0, 1],
-		raw_activation = sigmoid_activation(w_dot_x)
+		raw_activation = self.sigmoid_activation(w_dot_x)
 
 		if not predict_activation:
 			return raw_activation
@@ -41,15 +44,14 @@ class Batch_Gradient_Descent:
 		else:
 			return 1
 
-	def calc_error(self, inputs_vector, ground_truth_labels, l_rate): 
+	def calc_error(self, inputs_vector, ground_truth_labels, l_rate, lambda_value): 
 		assert(len(inputs_vector) == len(ground_truth_labels))
 
-		# zero out the delta weights and precalculate regularization term
-		regularization_term = 0
-		for i in range(self.num_features):
-			regularization_term += self.weights[i] * self.weights[i]
-		
-		regularization_term *= (l_rate / 2.0)
+		# precalculate regularization term
+		#regularization_term = 0
+		#for i in range(self.num_features):
+		#	regularization_term += self.weights[i] * self.weights[i]
+		#regularization_term *= (lambda_value / 2.0)
 
 		error = 0
 		for inputs, label in zip(inputs_vector, ground_truth_labels):
@@ -62,35 +64,37 @@ class Batch_Gradient_Descent:
 
 			# compute loss function Err(w)=-\sum_i {y^{i}\log(g(w, x_i)) + (1-y^{i})\log(1-g(w, x_i))}
 			error += -(binary_label * math.log(prediction) + (1-binary_label)* math.log(prediction))
-			error += regularization_term
-
-
+		#error += regularization_term
+		error /= float(len(inputs_vector))
 		return error
 
-	def train_weights_one_epoch(self, inputs_vector, ground_truth_labels, l_rate=1.00):
+	def train_weights_one_epoch(self, inputs_vector, ground_truth_labels, l_rate, lambda_value):
 
 		assert(len(inputs_vector) == len(ground_truth_labels))
 
-		# zero out the delta weights and precalculate regularization term
-		regularization_term = 0
+		# zero out the delta weights
 		for i in range(self.num_features):
 			self.delta_weights[i] = 0.0
-			regularization_term += self.weights[i]
-		regularization_term *= l_rate
 
 		for inputs, label in zip(inputs_vector, ground_truth_labels):
 
 			prediction = self.predict(inputs, False) # get predicted raw classificaion from sigmoid
 			# label is a digit from 0 to 9 so need to normalize
-			binary_label = 0
+			binary_label = 0.0
 			if self.predict_label == label:
-				binary_label = 1
+				binary_label = 1.0
 			
 			# compute the gradients and regularization term
-			for i in range(self.num_features):
+			for j in range(self.num_features):
 				# gradient = x_i^j (g(z) - y^i)
-				self.delta_weights[i] += self.weights[i] + (error * l_rate * y_hat * inputs[i]) + regularization_term
+				gradient_j = inputs[j] * (prediction - binary_label)
+				
+				self.delta_weights[j] = self.delta_weights[j] + l_rate * (gradient_j)
+#TODO Why I had to divide by total examples and change - for + in gradient for things to look like converging? 
 
 		# update weights
-		for i in range(self.num_features):
-			self.weights[i] += self.delta_weights[i]				
+		for j in range(self.num_features):
+			#regularization_term = lambda_value * self.weights[j]
+			regularization_term = 0.0
+			#self.weights[j] += self.delta_weights[j] + regularization_term
+			self.weights[j] += self.delta_weights[j]/float(len(inputs_vector)) + regularization_term

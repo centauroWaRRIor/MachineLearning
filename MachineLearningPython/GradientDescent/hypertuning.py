@@ -47,7 +47,8 @@ def main():
 		ground_truth_labels.append(training_data_stream.get_label(i))
 
 	gd_classifier = Digit_Classifier()
-	gd_classifier.train(int(args.number_epochs), inputs_vector, ground_truth_labels, float(args.learning_rate))
+	#gd_classifier.train(int(args.number_epochs), inputs_vector, ground_truth_labels, float(args.learning_rate))
+	gd_classifier.train(10, inputs_vector, ground_truth_labels, float(args.learning_rate), 0.5, True)
 
 	# Predict the training data
 	#f1_macro_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)

@@ -48,10 +48,10 @@ class Batch_Gradient_Descent:
 		assert(len(inputs_vector) == len(ground_truth_labels))
 
 		# precalculate regularization term
-		#regularization_term = 0
-		#for i in range(self.num_features):
-		#	regularization_term += self.weights[i] * self.weights[i]
-		#regularization_term *= (lambda_value / 2.0)
+		regularization_term = 0
+		for i in range(self.num_features):
+			regularization_term += self.weights[i] * self.weights[i]
+		regularization_term *= lambda_value / (2.0 * float(len(inputs_vector)))
 
 		error = 0
 		for inputs, label in zip(inputs_vector, ground_truth_labels):
@@ -64,7 +64,7 @@ class Batch_Gradient_Descent:
 
 			# compute loss function Err(w)=-\sum_i {y^{i}\log(g(w, x_i)) + (1-y^{i})\log(1-g(w, x_i))}
 			error += -(binary_label * math.log(prediction) + (1-binary_label)* math.log(prediction))
-		#error += regularization_term
+		error += regularization_term
 		error /= float(len(inputs_vector))
 		return error
 
@@ -88,13 +88,9 @@ class Batch_Gradient_Descent:
 			for j in range(self.num_features):
 				# gradient = x_i^j (g(z) - y^i)
 				gradient_j = inputs[j] * (prediction - binary_label)
-				
 				self.delta_weights[j] = self.delta_weights[j] + l_rate * (gradient_j)
-#TODO Why I had to divide by total examples and change - for + in gradient for things to look like converging? 
 
 		# update weights
 		for j in range(self.num_features):
-			#regularization_term = lambda_value * self.weights[j]
-			regularization_term = 0.0
-			#self.weights[j] += self.delta_weights[j] + regularization_term
+			regularization_term = (lambda_value * self.weights[j] / float(len(inputs_vector)))
 			self.weights[j] += self.delta_weights[j]/float(len(inputs_vector)) + regularization_term

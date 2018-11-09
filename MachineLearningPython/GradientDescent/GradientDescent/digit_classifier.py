@@ -1,5 +1,6 @@
 from score import Classifier_Score
 from gradient_descent import Batch_Gradient_Descent
+import random
 
 class Digit_Classifier:
 	"""10 GD classifiers, each one trained to recognize one digit"""
@@ -18,6 +19,10 @@ class Digit_Classifier:
 
 
 	def train(self, number_epoch, inputs_vector, ground_truth_labels, l_rate, lambda_value, verbose=False):
+
+		# randomize the training set
+		random.shuffle(inputs_vector) 
+
 		for i in range(number_epoch):
 			if verbose:
 				print "Training Epoch # %d" % i

@@ -1,6 +1,5 @@
 from score import Classifier_Score
 from gradient_descent import Batch_Gradient_Descent
-import random
 
 class Digit_Classifier:
 	"""10 GD classifiers, each one trained to recognize one digit"""
@@ -34,10 +33,7 @@ class Digit_Classifier:
 						      inputs_vector_train, ground_truth_labels_train,
 							  inputs_vector_test, ground_truth_labels_test):
 
-		# randomize the training set
-		#random.shuffle(inputs_vector)  no so fast cowboy! this is possibly a bug, If I reshuffle the inputs vector then I lose the parity with the ground truths vector
-
-		#for i in range(number_epoch):
+		# the training set is assumed to be randomized at this point
 		i = 0
 		while not self.is_converged():
 			loss = self.train_one_epoch(inputs_vector_train, ground_truth_labels_train, l_rate, lambda_value)

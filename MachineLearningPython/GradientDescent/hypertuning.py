@@ -3,6 +3,7 @@ import os
 import argparse
 import gzip
 import shutil
+import random
 
 from GradientDescent.datastream import MNIST_Datastream
 from GradientDescent.digit_classifier import Digit_Classifier
@@ -36,10 +37,14 @@ def main():
 	labels_filename_path = os.path.join(os.path.abspath(args.data_path), "t10k-labels.idx1-ubyte")
 	test_data_stream = MNIST_Datastream(images_filename_path, labels_filename_path)
 
-	# collect train data
+	# collect train data in a random order
 	inputs_vector_train = []
 	ground_truth_labels_train = []
-	for i in range(int(args.training_set_size)):
+	random_indices = []
+	for i in range(10000):
+		random_indices.append(i)
+	random.shuffle(random_indices)
+	for i in random_indices:
 		feature_inputs = training_data_stream.get_scaled_1d_image(i)
 		# augment the inputs with the bias term
 		feature_inputs.append(1)

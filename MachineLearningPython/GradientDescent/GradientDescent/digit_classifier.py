@@ -15,9 +15,17 @@ class Digit_Classifier:
 		#		self.perceptrons.append(Average_Perceptron(i))
 		#	elif perceptron_type == "Winnow_Perceptron":
 		#		self.perceptrons.append(Vanilla_Winnow(i))
-		
+
+		#self.classifier = Batch_Gradient_Descent(1, True)
+		#self.classifier = Batch_Gradient_Descent(2, True)
+		#self.classifier = Batch_Gradient_Descent(3, True)
+		#self.classifier = Batch_Gradient_Descent(4, True)
 		self.classifier = Batch_Gradient_Descent(5, True)
+		#self.classifier = Batch_Gradient_Descent(6, True)
+		#self.classifier = Batch_Gradient_Descent(7, True)
+		#self.classifier = Batch_Gradient_Descent(8, True)
 		#self.classifier = Batch_Gradient_Descent(9, True)
+
 
 	def run_until_convergence(self, number_epoch, l_rate, lambda_value,
 						      inputs_vector_train, ground_truth_labels_train,

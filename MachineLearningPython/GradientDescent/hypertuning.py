@@ -36,35 +36,30 @@ def main():
 	labels_filename_path = os.path.join(os.path.abspath(args.data_path), "t10k-labels.idx1-ubyte")
 	test_data_stream = MNIST_Datastream(images_filename_path, labels_filename_path)
 
-	inputs_vector = []
-	ground_truth_labels = []
-
+	# collect train data
+	inputs_vector_train = []
+	ground_truth_labels_train = []
 	for i in range(int(args.training_set_size)):
 		feature_inputs = training_data_stream.get_scaled_1d_image(i)
 		# augment the inputs with the bias term
 		feature_inputs.append(1)
-		inputs_vector.append(feature_inputs)
-		ground_truth_labels.append(training_data_stream.get_label(i))
+		inputs_vector_train.append(feature_inputs)
+		ground_truth_labels_train.append(training_data_stream.get_label(i))
+	
+	# collect test data
+	inputs_vector_test = []
+	ground_truth_labels_test = []
+	for i in range(test_data_stream.num_images):
+		feature_inputs = test_data_stream.get_scaled_1d_image(i)
+		# augment the inputs with the bias term
+		feature_inputs.append(1)
+		inputs_vector_test.append(feature_inputs)
+		ground_truth_labels_test.append(test_data_stream.get_label(i))
 
 	gd_classifier = Digit_Classifier()
-	#gd_classifier.train(int(args.number_epochs), inputs_vector, ground_truth_labels, float(args.learning_rate))
-	gd_classifier.run_until_convergence(20, inputs_vector, ground_truth_labels, float(args.learning_rate), 0.5)
-
-	# Predict the training data
-	#f1_macro_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
-	#print "Training F1 Score: %.2f" % f1_macro_score
-
-	# Predict the test data
-	#inputs_vector = []
-	#ground_truth_labels = []
-	#for i in range(test_data_stream.num_images):
-	#	feature_inputs = test_data_stream.get_scaled_1d_image(i)
-	#	# augment the inputs with the bias term
-	#	feature_inputs.append(1)
-	#	inputs_vector.append(feature_inputs)
-	#	ground_truth_labels.append(test_data_stream.get_label(i))
-	#f1_macro_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)
-	#print "Test F1 Score: %.2f" % f1_macro_score
+	gd_classifier.run_until_convergence(20, float(args.learning_rate), 0.5,
+		inputs_vector_train, ground_truth_labels_train, 
+		inputs_vector_test, ground_truth_labels_test)
 
 	return 0
 

@@ -6,7 +6,7 @@ class Batch_Gradient_Descent:
 	The 784 inputs come directly from MNIST hand written images once the vector
 	has been flattened"""
 	
-	def __init__(self, predict_label, init_random_weights=False):
+	def __init__(self, predict_label, init_random_weights):
 		self.num_features = 785
 		self.weights = []
 		self.delta_weights = []
@@ -20,7 +20,7 @@ class Batch_Gradient_Descent:
 			self.delta_weights.append(0.0)
 
 	def sigmoid_activation(self, z):
-		return 1.0 / (1.0 + math.exp(-z))
+		return 1.0 / (1.0 + math.exp(z))
 
 	def predict(self, inputs, predict_activation):
 		""" If predict activation is false, this function
@@ -34,12 +34,14 @@ class Batch_Gradient_Descent:
 			w_dot_x += inputs[i] * self.weights[i] 
 
 		# the sigmoid function is defined over the range y=[0, 1],
-		raw_activation = self.sigmoid_activation(w_dot_x)
+		raw_activation = self.sigmoid_activation(-w_dot_x)
 
 		if not predict_activation:
 			return raw_activation
 
-		if raw_activation < 0.5:
+		#TODO: The way I implemented GD ended up me having to flip the logic here.
+		# I'm sill working on understanding the reason :)
+		if raw_activation > 0.5: 
 			return 0
 		else:
 			return 1

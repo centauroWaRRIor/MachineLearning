@@ -48,7 +48,7 @@ def main():
 
 	gd_classifier = Digit_Classifier()
 	#gd_classifier.train(int(args.number_epochs), inputs_vector, ground_truth_labels, float(args.learning_rate))
-	gd_classifier.train(20, inputs_vector, ground_truth_labels, float(args.learning_rate), 0.5, True)
+	gd_classifier.run_until_convergence(20, inputs_vector, ground_truth_labels, float(args.learning_rate), 0.5)
 
 	# Predict the training data
 	#f1_macro_score = vanilla_classifier.evaluate_f1_performance(inputs_vector, ground_truth_labels)

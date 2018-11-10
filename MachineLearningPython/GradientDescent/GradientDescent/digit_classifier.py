@@ -15,39 +15,39 @@ class Digit_Classifier:
 		#		self.perceptrons.append(Average_Perceptron(i))
 		#	elif perceptron_type == "Winnow_Perceptron":
 		#		self.perceptrons.append(Vanilla_Winnow(i))
+		
 		self.classifier = Batch_Gradient_Descent(5, True)
+		#self.classifier = Batch_Gradient_Descent(9, True)
 
-
-	def train(self, number_epoch, inputs_vector, ground_truth_labels, l_rate, lambda_value, verbose=False):
+	def run_until_convergence(self, number_epoch, inputs_vector, ground_truth_labels, l_rate, lambda_value):
 
 		# randomize the training set
 		random.shuffle(inputs_vector) 
 
 		for i in range(number_epoch):
-			if verbose:
-				print "Training Epoch # %d" % i
-			#for perceptron in self.perceptrons:
-			#	perceptron.train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate)
-			self.classifier.train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate, lambda_value)
-			error = self.classifier.calc_error(inputs_vector, ground_truth_labels, l_rate, lambda_value)
-			print error
+			print "Training Epoch # %d" % i
+			self.train_one_epoch(inputs_vector, ground_truth_labels, l_rate, lambda_value)
+			self.evaluate_accuracy_one_epoch(inputs_vector, ground_truth_labels)
 
-	#def evaluate_f1_performance(self, inputs_vector, ground_truth_labels):
 
-	#	self.scorer.reset()
-	#	for inputs, label in zip(inputs_vector, ground_truth_labels):
-	#		largest_w_dot_x = 0
-	#		largest_w_dot_x_index = 0 # by default predict 0
-	#		for i in range(10):
-	#			w_dot_x = self.perceptrons[i].predict_w_dot_x(inputs)
-	#			#print ("predicted w_dot_x: ", w_dot_x)
-	#			if w_dot_x > largest_w_dot_x:
-	#				largest_w_dot_x = w_dot_x
-	#				largest_w_dot_x_index = i
-	#		# prediction is stored in largest_w_dot_x_index
-	#		#print ("predicted: ", largest_w_dot_x_index, "expected: ", label)
-	#		self.scorer.record_result(label, largest_w_dot_x_index)
+	def train_one_epoch(self, inputs_vector, ground_truth_labels, l_rate, lambda_value):
 
-	#	# return F1-Score
-	#	return self.scorer.get_macro_F1_score()
+		#for perceptron in self.perceptrons:
+		#	perceptron.train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate)
+		self.classifier.train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate, lambda_value)
+		error = self.classifier.calc_error(inputs_vector, ground_truth_labels, l_rate, lambda_value)
+		print "error = %f" % error
+
+	def evaluate_accuracy_one_epoch(self, inputs_vector, ground_truth_labels):
+
+		self.scorer.reset()
+		for inputs, label in zip(inputs_vector, ground_truth_labels):
+			prediction = self.classifier.predict(inputs, True)
+			binary_label = 0
+			if self.classifier.predict_label == label:
+				binary_label = 1
+			self.scorer.record_result(binary_label, prediction)
+			#print "predicted %d vs truth %d" % (prediction, binary_label) 
+
+		print "accuracy = %f" % self.scorer.get_accuracy()
 

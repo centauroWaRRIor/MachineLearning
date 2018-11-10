@@ -57,7 +57,7 @@ def main():
 		ground_truth_labels_test.append(test_data_stream.get_label(i))
 
 	gd_classifier = Digit_Classifier()
-	gd_classifier.run_until_convergence(20, float(args.learning_rate), 0.5,
+	gd_classifier.run_until_convergence(float(args.learning_rate), 0.5,
 		inputs_vector_train, ground_truth_labels_train, 
 		inputs_vector_test, ground_truth_labels_test)
 

@@ -11,6 +11,9 @@ class Batch_Gradient_Descent:
 		self.weights = []
 		self.delta_weights = []
 		self.predict_label = predict_label # this is the handwritten digit this classifier is going to learn to predict
+		self.convergence_criteria = 0.001
+		self.loss_history = []
+		self.is_converged = False
 		# initialize the weights
 		for i in range(self.num_features):
 			if init_random_weights:
@@ -41,12 +44,12 @@ class Batch_Gradient_Descent:
 
 		#TODO: The way I implemented GD ended up me having to flip the logic here.
 		# I'm sill working on understanding the reason :)
-		if raw_activation > 0.5: 
+		if raw_activation > 0.5:
 			return 0
 		else:
 			return 1
 
-	def calc_error(self, inputs_vector, ground_truth_labels, l_rate, lambda_value): 
+	def calc_error_one_epoch(self, inputs_vector, ground_truth_labels, l_rate, lambda_value): 
 		assert(len(inputs_vector) == len(ground_truth_labels))
 
 		# precalculate regularization term
@@ -68,6 +71,12 @@ class Batch_Gradient_Descent:
 			error += -(binary_label * math.log(prediction) + (1-binary_label)* math.log(prediction))
 		error += regularization_term
 		error /= float(len(inputs_vector))
+		# figure out if convergence has happened
+		self.loss_history.append(error)
+		if len(self.loss_history) > 2 and (self.loss_history[-2] - self.loss_history[-1]) < self.convergence_criteria:
+			self.is_converged = True
+		else:
+			self.is_converged = False
 		return error
 
 	def train_weights_one_epoch(self, inputs_vector, ground_truth_labels, l_rate, lambda_value):

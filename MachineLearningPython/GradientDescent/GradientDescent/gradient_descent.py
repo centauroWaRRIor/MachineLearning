@@ -87,12 +87,6 @@ class Batch_Gradient_Descent:
 			self.is_converged = False
 		return error
 
-	def gradient(self, y_i, x_i, j_index):
-		""" Logistic regression gradient """
-		prediction = self.predict(x_i, False) # get predicted raw classificaion from sigmoid, not binary 0/1
-		diff = prediction - y_i
-		return x_i[j_index] * diff
-
 	def train_weights_one_epoch(self, inputs_vector, ground_truth_labels, l_rate, lambda_value):
 
 		assert(len(inputs_vector) == len(ground_truth_labels))
@@ -107,7 +101,7 @@ class Batch_Gradient_Descent:
 		example_number = 1
 		for inputs, label in zip(inputs_vector, ground_truth_labels):
 
-			prediction = self.predict(inputs, False) # get predicted raw classificaion from sigmoid
+			prediction = self.predict(inputs, False) # get predicted raw classificaion from sigmoid, not binary 0/1
 			# label is a digit from 0 to 9 so need to normalize
 			binary_label = 0.0
 			if self.predict_label == label:
@@ -117,8 +111,7 @@ class Batch_Gradient_Descent:
 			for j in range(self.num_features):
 				# gradient = x_i^j (g(z) - y^i)
 				gradient_j = inputs[j] * (prediction - binary_label)
-				self.delta_weights[j] = self.delta_weights[j] + l_rate * (gradient_j)
-				#self.delta_weights[j] += l_rate * self.gradient(binary_label, inputs, j)
+				self.delta_weights[j] += l_rate * gradient_j
 			example_number += 1
 
 		# update weights

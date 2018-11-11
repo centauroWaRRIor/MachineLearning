@@ -7,9 +7,9 @@ class Digit_Classifier:
 	def __init__(self, perceptron_type="Placeholder"):
 		self.scorer = Classifier_Score()
 		self.classifiers = []
-		#for i in range(10):
-			#self.classifiers.append(Batch_Gradient_Descent(i, True))
-		self.classifiers.append(Batch_Gradient_Descent(5, True))
+		for i in range(10):
+			self.classifiers.append(Batch_Gradient_Descent(i, True))
+		#self.classifiers.append(Batch_Gradient_Descent(5, True))
 
 	def is_converged(self):
 		# my convergence rule is the following: all the classifiers need to converge
@@ -36,18 +36,17 @@ class Digit_Classifier:
 				loss = self.train_one_epoch(classifier_index, inputs_vector_train, ground_truth_labels_train, l_rate, lambda_value)
 				average_loss += loss
 				training_accuracy = self.evaluate_classifier_accuracy_one_epoch(classifier_index, inputs_vector_train, ground_truth_labels_train)
-				#test_accuracy = self.evaluate_classifier_accuracy_one_epoch(classifier_index, inputs_vector_test, ground_truth_labels_test)
 				print "classifier index: %d, epoch: %d, Training Loss: %0.2f, Training Accuracy: %0.2f" % \
 					(classifier_index, epoch_number, loss, training_accuracy)
 				classifier_index += 1
 
-			#average_loss /= len(self.classifiers)
-			#training_accuracy = self.evaluate_system_accuracy_one_epoch(inputs_vector_train, ground_truth_labels_train)
-			#test_accuracy = self.evaluate_system_accuracy_one_epoch(inputs_vector_test, ground_truth_labels_test)
-			#print "============================================================================="
-			#print "epoch: %d Training Loss: %0.2f, Training Accuracy: %0.2f, Test Accuracy: %0.2f" % \
-			#	(epoch_number, average_loss, training_accuracy, test_accuracy)
-			#print "============================================================================="
+			average_loss /= len(self.classifiers)
+			training_accuracy = self.evaluate_system_accuracy_one_epoch(inputs_vector_train, ground_truth_labels_train)
+			test_accuracy = self.evaluate_system_accuracy_one_epoch(inputs_vector_test, ground_truth_labels_test)
+			print "============================================================================="
+			print "epoch: %d Training Loss: %0.2f, Training Accuracy: %0.2f, Test Accuracy: %0.2f" % \
+				(epoch_number, average_loss, training_accuracy, test_accuracy)
+			print "============================================================================="
 			epoch_number += 1
 
 
@@ -70,9 +69,8 @@ class Digit_Classifier:
 		return self.scorer.get_accuracy()
 
 	def evaluate_system_accuracy_one_epoch(self, inputs_vector, ground_truth_labels):
-
+		"""Evaluates the accuracy for the entire system of 10 digit classifier"""
 		self.scorer.reset()
-		
 		for inputs, label in zip(inputs_vector, ground_truth_labels):
 			
 			classifiers_predictions = []

@@ -7,8 +7,9 @@ class Digit_Classifier:
 	def __init__(self, perceptron_type="Placeholder"):
 		self.scorer = Classifier_Score()
 		self.classifiers = []
-		for i in range(10):
-			self.classifiers.append(Batch_Gradient_Descent(i, True))
+		#for i in range(10):
+			#self.classifiers.append(Batch_Gradient_Descent(i, True))
+		self.classifiers.append(Batch_Gradient_Descent(5, True))
 
 	def is_converged(self):
 		# my convergence rule is the following: all the classifiers need to converge
@@ -25,7 +26,8 @@ class Digit_Classifier:
 
 		# the training set is assumed to be randomized at this point
 		epoch_number = 0
-		while not self.is_converged():
+		#while not self.is_converged():
+		while True:
 			classifier_index = 0
 			average_loss = 0.0
 			# train and test all digit classifiers
@@ -39,26 +41,24 @@ class Digit_Classifier:
 					(classifier_index, epoch_number, loss, training_accuracy)
 				classifier_index += 1
 
-			average_loss /= len(self.classifiers)
-			training_accuracy = self.evaluate_system_accuracy_one_epoch(inputs_vector_train, ground_truth_labels_train)
-			test_accuracy = self.evaluate_system_accuracy_one_epoch(inputs_vector_test, ground_truth_labels_test)
-			print "============================================================================="
-			print "epoch: %d Training Loss: %0.2f, Training Accuracy: %0.2f, Test Accuracy: %0.2f" % \
-				(epoch_number, average_loss, training_accuracy, test_accuracy)
-			print "============================================================================="
+			#average_loss /= len(self.classifiers)
+			#training_accuracy = self.evaluate_system_accuracy_one_epoch(inputs_vector_train, ground_truth_labels_train)
+			#test_accuracy = self.evaluate_system_accuracy_one_epoch(inputs_vector_test, ground_truth_labels_test)
+			#print "============================================================================="
+			#print "epoch: %d Training Loss: %0.2f, Training Accuracy: %0.2f, Test Accuracy: %0.2f" % \
+			#	(epoch_number, average_loss, training_accuracy, test_accuracy)
+			#print "============================================================================="
 			epoch_number += 1
 
 
 	def train_one_epoch(self, classifier_index, inputs_vector, ground_truth_labels, l_rate, lambda_value):
-
-		#for perceptron in self.perceptrons:
-		#	perceptron.train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate)
+		"""Train one classifier for a full epoch"""
 		self.classifiers[classifier_index].train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate, lambda_value)
 		error = self.classifiers[classifier_index].calc_error_one_epoch(inputs_vector, ground_truth_labels, l_rate, lambda_value)
 		return error
 
 	def evaluate_classifier_accuracy_one_epoch(self, classifier_index, inputs_vector, ground_truth_labels):
-
+		"""Evaluates one classifier accuracy for a full epoch"""
 		self.scorer.reset()
 		for inputs, label in zip(inputs_vector, ground_truth_labels):
 			prediction = self.classifiers[classifier_index].predict(inputs, True)

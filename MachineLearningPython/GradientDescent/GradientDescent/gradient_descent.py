@@ -42,9 +42,7 @@ class Batch_Gradient_Descent:
 		if not predict_activation:
 			return raw_activation
 
-		#TODO: The way I implemented GD ended up me having to flip the logic here.
-		# I'm sill working on understanding the reason :)
-		if raw_activation > 0.5:
+		if raw_activation < 0.5:
 			return 0
 		else:
 			return 1
@@ -111,10 +109,13 @@ class Batch_Gradient_Descent:
 			for j in range(self.num_features):
 				# gradient = x_i^j (g(z) - y^i)
 				gradient_j = inputs[j] * (prediction - binary_label)
-				self.delta_weights[j] += l_rate * gradient_j
+				#self.delta_weights[j] += l_rate * gradient_j
+				self.delta_weights[j] += gradient_j
 			example_number += 1
 
 		# update weights
 		for j in range(self.num_features):
 			regularization_term = (lambda_value * self.weights[j] / float(len(inputs_vector)))
-			self.weights[j] += (self.delta_weights[j] / float(len(inputs_vector))) + regularization_term
+			#self.weights[j] += (self.delta_weights[j] / float(len(inputs_vector))) + regularization_term
+			self.weights[j] = self.weights[j] - (l_rate * self.delta_weights[j] / float(len(inputs_vector))) + regularization_term
+		return

@@ -78,11 +78,11 @@ class Digit_Classifier:
 				# collect each digit classifier prediction in raw format (without the rounding)
 				classifiers_predictions.append(classifier.predict(inputs, False))
 
-			lowest_prediction = 1.0
+			highest_prediction = -1.0
 			prediction = 0
 			for i in range(len(classifiers_predictions)):
-				if classifiers_predictions[i] < lowest_prediction:
-					lowest_prediction = classifiers_predictions[i]
+				if classifiers_predictions[i] > highest_prediction:
+					highest_prediction = classifiers_predictions[i]
 					prediction = i
 			
 			self.scorer.record_result(label, prediction)

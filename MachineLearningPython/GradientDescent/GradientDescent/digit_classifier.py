@@ -31,19 +31,21 @@ class Digit_Classifier:
 			# train and test all digit classifiers
 			for classifier in self.classifiers:
 				# training is skipped if given classifier has converged
-				average_loss += self.train_one_epoch(classifier_index, inputs_vector_train, ground_truth_labels_train, l_rate, lambda_value)
-				#training_accuracy = self.evaluate_classifier_accuracy_one_epoch(classifier_index, inputs_vector_train, ground_truth_labels_train)
+				loss = self.train_one_epoch(classifier_index, inputs_vector_train, ground_truth_labels_train, l_rate, lambda_value)
+				average_loss += loss
+				training_accuracy = self.evaluate_classifier_accuracy_one_epoch(classifier_index, inputs_vector_train, ground_truth_labels_train)
 				#test_accuracy = self.evaluate_classifier_accuracy_one_epoch(classifier_index, inputs_vector_test, ground_truth_labels_test)
-				#print "classifier index = %d" % classifier_index
-				#print "epoch %d: Training Loss: %0.2f, Testing Accuracy: %0.2f, Test Accuracy: %0.2f" % \
-				#	(epoch_number, loss, training_accuracy, test_accuracy)
+				print "classifier index: %d, epoch: %d, Training Loss: %0.2f, Training Accuracy: %0.2f" % \
+					(classifier_index, epoch_number, loss, training_accuracy)
 				classifier_index += 1
 
 			average_loss /= len(self.classifiers)
 			training_accuracy = self.evaluate_system_accuracy_one_epoch(inputs_vector_train, ground_truth_labels_train)
 			test_accuracy = self.evaluate_system_accuracy_one_epoch(inputs_vector_test, ground_truth_labels_test)
-			print "epoch %d: Training Loss: %0.2f, Training Accuracy: %0.2f, Test Accuracy: %0.2f" % \
+			print "============================================================================="
+			print "epoch: %d Training Loss: %0.2f, Training Accuracy: %0.2f, Test Accuracy: %0.2f" % \
 				(epoch_number, average_loss, training_accuracy, test_accuracy)
+			print "============================================================================="
 			epoch_number += 1
 
 

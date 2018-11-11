@@ -50,7 +50,11 @@ class Batch_Gradient_Descent:
 			return 1
 
 	def calc_error_one_epoch(self, inputs_vector, ground_truth_labels, l_rate, lambda_value): 
+
 		assert(len(inputs_vector) == len(ground_truth_labels))
+
+		if self.is_converged:
+			return self.loss_history[-1]
 
 		# precalculate regularization term
 		regularization_term = 0
@@ -82,6 +86,9 @@ class Batch_Gradient_Descent:
 	def train_weights_one_epoch(self, inputs_vector, ground_truth_labels, l_rate, lambda_value):
 
 		assert(len(inputs_vector) == len(ground_truth_labels))
+
+		if self.is_converged:
+			return
 
 		# zero out the delta weights
 		for i in range(self.num_features):

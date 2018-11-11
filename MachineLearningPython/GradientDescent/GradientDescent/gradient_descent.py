@@ -17,13 +17,13 @@ class Batch_Gradient_Descent:
 		# initialize the weights
 		for i in range(self.num_features):
 			if init_random_weights:
-				self.weights.append(random.uniform(-1.0, 1.0))
+				self.weights.append(0.1 * random.uniform(0.0, 1.0))
 			else:
 				self.weights.append(0.0)
 			self.delta_weights.append(0.0)
 
 	def sigmoid_activation(self, z):
-		return 1.0 / (1.0 + math.exp(z))
+		return 1.0 / (1.0 + math.exp(-z))
 
 	def predict(self, inputs, predict_activation):
 		""" If predict activation is false, this function
@@ -37,7 +37,7 @@ class Batch_Gradient_Descent:
 			w_dot_x += inputs[i] * self.weights[i] 
 
 		# the sigmoid function is defined over the range y=[0, 1],
-		raw_activation = self.sigmoid_activation(-w_dot_x)
+		raw_activation = self.sigmoid_activation(w_dot_x)
 
 		if not predict_activation:
 			return raw_activation
@@ -48,6 +48,11 @@ class Batch_Gradient_Descent:
 			return 0
 		else:
 			return 1
+
+	def calc_error(self, y_i, x_i):
+		""" Logistic regression loss """
+		prediction = self.predict(x_i, False) # get predicted raw classificaion from sigmoid, not binary 0/1
+		return -(y_i * math.log(prediction) + (1 - y_i) * math.log(1 - prediction))
 
 	def calc_error_one_epoch(self, inputs_vector, ground_truth_labels, l_rate, lambda_value): 
 
@@ -65,16 +70,15 @@ class Batch_Gradient_Descent:
 		error = 0
 		for inputs, label in zip(inputs_vector, ground_truth_labels):
 
-			prediction = self.predict(inputs, False) # get predicted raw classificaion from sigmoid
 			# label is a digit from 0 to 9 so need to normalize
 			binary_label = 0
 			if self.predict_label == label:
 				binary_label = 1
-
 			# compute loss function Err(w)=-\sum_i {y^{i}\log(g(w, x_i)) + (1-y^{i})\log(1-g(w, x_i))}
-			error += -(binary_label * math.log(prediction) + (1-binary_label)* math.log(prediction))
+			error += self.calc_error(binary_label, inputs)
 		error += regularization_term
 		error /= float(len(inputs_vector))
+
 		# figure out if convergence has happened
 		self.loss_history.append(error)
 		if len(self.loss_history) > 2 and (self.loss_history[-2] - self.loss_history[-1]) < self.convergence_criteria:
@@ -82,6 +86,12 @@ class Batch_Gradient_Descent:
 		else:
 			self.is_converged = False
 		return error
+
+	def gradient(self, y_i, x_i, j_index):
+		""" Logistic regression gradient """
+		prediction = self.predict(x_i, False) # get predicted raw classificaion from sigmoid, not binary 0/1
+		diff = prediction - y_i
+		return x_i[j_index] * diff
 
 	def train_weights_one_epoch(self, inputs_vector, ground_truth_labels, l_rate, lambda_value):
 
@@ -94,6 +104,7 @@ class Batch_Gradient_Descent:
 		for i in range(self.num_features):
 			self.delta_weights[i] = 0.0
 
+		example_number = 1
 		for inputs, label in zip(inputs_vector, ground_truth_labels):
 
 			prediction = self.predict(inputs, False) # get predicted raw classificaion from sigmoid
@@ -107,8 +118,10 @@ class Batch_Gradient_Descent:
 				# gradient = x_i^j (g(z) - y^i)
 				gradient_j = inputs[j] * (prediction - binary_label)
 				self.delta_weights[j] = self.delta_weights[j] + l_rate * (gradient_j)
+				#self.delta_weights[j] += l_rate * self.gradient(binary_label, inputs, j)
+			example_number += 1
 
 		# update weights
 		for j in range(self.num_features):
 			regularization_term = (lambda_value * self.weights[j] / float(len(inputs_vector)))
-			self.weights[j] += self.delta_weights[j]/float(len(inputs_vector)) + regularization_term
+			self.weights[j] += (self.delta_weights[j] / float(len(inputs_vector))) + regularization_term

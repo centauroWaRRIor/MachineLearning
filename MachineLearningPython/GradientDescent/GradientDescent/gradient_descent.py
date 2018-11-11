@@ -52,7 +52,7 @@ class Batch_Gradient_Descent:
 	def calc_error(self, y_i, x_i):
 		""" Logistic regression loss """
 		prediction = self.predict(x_i, False) # get predicted raw classificaion from sigmoid, not binary 0/1
-		return -(y_i * math.log(prediction) + (1 - y_i) * math.log(1 - prediction))
+		return -y_i * math.log(prediction) - (1 - y_i) * math.log(1 - prediction)
 
 	def calc_error_one_epoch(self, inputs_vector, ground_truth_labels, l_rate, lambda_value): 
 

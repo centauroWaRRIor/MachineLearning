@@ -1,14 +1,22 @@
 from score import Classifier_Score
 from gradient_descent import Batch_Gradient_Descent
+from gradient_descent import Stochastic_Gradient_Descent
 
 class Digit_Classifier:
 	"""10 GD classifiers, each one trained to recognize one digit"""
 		
-	def __init__(self, perceptron_type="Placeholder"):
+	def __init__(self, learning_environment):
 		self.scorer = Classifier_Score()
 		self.classifiers = []
+		self.learning_environment = learning_environment
+		self.stochastic_example_index = 0
 		for i in range(10):
-			self.classifiers.append(Batch_Gradient_Descent(i, True))
+			if learning_environment == "Batch":
+				self.classifiers.append(Batch_Gradient_Descent(i, True))
+			elif learning_environment == "Stochastic":
+				self.classifiers.append(Stochastic_Gradient_Descent(i, True))
+			else:
+				raise ValueError('A bad parameter was passed to Digit Classifier constructor')
 		#self.classifiers.append(Batch_Gradient_Descent(5, True))
 
 	def is_converged(self):
@@ -26,8 +34,8 @@ class Digit_Classifier:
 
 		# the training set is assumed to be randomized at this point
 		epoch_number = 0
-		#while not self.is_converged():
-		while True:
+		while not self.is_converged():
+		#while True:
 			classifier_index = 0
 			average_loss = 0.0
 			# train and test all digit classifiers
@@ -35,9 +43,9 @@ class Digit_Classifier:
 				# training is skipped if given classifier has converged
 				loss = self.train_one_epoch(classifier_index, inputs_vector_train, ground_truth_labels_train, l_rate, lambda_value)
 				average_loss += loss
-				training_accuracy = self.evaluate_classifier_accuracy_one_epoch(classifier_index, inputs_vector_train, ground_truth_labels_train)
-				print "classifier index: %d, epoch: %d, Training Loss: %0.2f, Training Accuracy: %0.2f" % \
-					(classifier_index, epoch_number, loss, training_accuracy)
+				#training_accuracy = self.evaluate_classifier_accuracy_one_epoch(classifier_index, inputs_vector_train, ground_truth_labels_train)
+				#print "classifier index: %d, epoch: %d, Training Loss: %0.2f, Training Accuracy: %0.2f" % \
+				#	(classifier_index, epoch_number, loss, training_accuracy)
 				classifier_index += 1
 
 			average_loss /= len(self.classifiers)
@@ -52,8 +60,16 @@ class Digit_Classifier:
 
 	def train_one_epoch(self, classifier_index, inputs_vector, ground_truth_labels, l_rate, lambda_value):
 		"""Train one classifier for a full epoch"""
-		self.classifiers[classifier_index].train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate, lambda_value)
-		error = self.classifiers[classifier_index].calc_error_one_epoch(inputs_vector, ground_truth_labels, l_rate, lambda_value)
+		if self.learning_environment == "Batch":
+			self.classifiers[classifier_index].train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate, lambda_value)
+			error = self.classifiers[classifier_index].calc_error_one_epoch(inputs_vector, ground_truth_labels, l_rate, lambda_value)
+		elif self.learning_environment == "Stochastic":
+			if self.stochastic_example_index > len(inputs_vector):
+				print "Exhausted number of training examples for stochastic gradient descent, resetting"
+				stochastic_example_index = 0
+			self.classifiers[classifier_index].train_weights_one_epoch(inputs_vector[self.stochastic_example_index], ground_truth_labels[self.stochastic_example_index], l_rate, lambda_value)
+			self.stochastic_example_index += 1
+			error = self.classifiers[classifier_index].calc_error_one_epoch(inputs_vector[self.stochastic_example_index], ground_truth_labels[self.stochastic_example_index], l_rate, lambda_value)
 		return error
 
 	def evaluate_classifier_accuracy_one_epoch(self, classifier_index, inputs_vector, ground_truth_labels):

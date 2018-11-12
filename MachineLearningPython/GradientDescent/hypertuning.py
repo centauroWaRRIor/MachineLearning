@@ -61,7 +61,7 @@ def main():
 		inputs_vector_test.append(feature_inputs)
 		ground_truth_labels_test.append(test_data_stream.get_label(i))
 
-	gd_classifier = Digit_Classifier()
+	gd_classifier = Digit_Classifier("Stochastic")
 	gd_classifier.run_until_convergence(float(args.learning_rate), 0.0,
 		inputs_vector_train, ground_truth_labels_train, 
 		inputs_vector_test, ground_truth_labels_test)

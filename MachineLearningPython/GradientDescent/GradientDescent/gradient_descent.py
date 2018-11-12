@@ -109,13 +109,74 @@ class Batch_Gradient_Descent:
 			for j in range(self.num_features):
 				# gradient = x_i^j (g(z) - y^i)
 				gradient_j = inputs[j] * (prediction - binary_label)
-				#self.delta_weights[j] += l_rate * gradient_j
 				self.delta_weights[j] += gradient_j
 			example_number += 1
 
 		# update weights
 		for j in range(self.num_features):
 			regularization_term = (lambda_value * self.weights[j] / float(len(inputs_vector)))
-			#self.weights[j] += (self.delta_weights[j] / float(len(inputs_vector))) + regularization_term
 			self.weights[j] = self.weights[j] - (l_rate * self.delta_weights[j] / float(len(inputs_vector))) + regularization_term
 		return
+
+
+class Stochastic_Gradient_Descent(Batch_Gradient_Descent):
+	""" Stochastic version of Gradient Descent"""
+
+	def __init__(self, predict_label, init_random_weights):
+		Batch_Gradient_Descent.__init__(self, predict_label, init_random_weights)
+
+	def train_weights_one_epoch(self, example, ground_truth_label, l_rate, lambda_value):
+
+		if self.is_converged:
+			return
+
+		# zero out the delta weights
+		for i in range(self.num_features):
+			self.delta_weights[i] = 0.0
+
+		prediction = self.predict(example, False) # get predicted raw classificaion from sigmoid, not binary 0/1
+		# ground_truth_label is a digit from 0 to 9 so need to normalize
+		binary_label = 0.0
+		if self.predict_label == ground_truth_label:
+			binary_label = 1.0
+			
+		# compute the gradients and regularization term
+		for j in range(self.num_features):
+			# gradient = x_i^j (g(z) - y^i)
+			gradient_j = example[j] * (prediction - binary_label)
+			self.delta_weights[j] += gradient_j
+
+		# update weights
+		for j in range(self.num_features):
+			regularization_term = lambda_value * self.weights[j]
+			self.weights[j] = self.weights[j] - l_rate * self.delta_weights[j] + regularization_term
+		return
+
+	def calc_error_one_epoch(self, example, ground_truth_label, l_rate, lambda_value): 
+
+		if self.is_converged:
+			return self.loss_history[-1]
+
+		# precalculate regularization term
+		regularization_term = 0
+		for i in range(self.num_features):
+			regularization_term += self.weights[i] * self.weights[i]
+		regularization_term *= lambda_value / 2.0
+
+		error = 0
+		# label is a digit from 0 to 9 so need to normalize
+		binary_label = 0
+		if self.predict_label == ground_truth_label:
+			binary_label = 1
+		# compute loss function Err(w)=-\sum_i {y^{i}\log(g(w, x_i)) + (1-y^{i})\log(1-g(w, x_i))}
+		error += self.calc_error(binary_label, example)
+		error += regularization_term
+
+		# figure out if convergence has happened
+		self.loss_history.append(error)
+		#if len(self.loss_history) > 2 and (self.loss_history[-2] - self.loss_history[-1]) < self.convergence_criteria:
+		if self.loss_history[-1] < self.convergence_criteria:
+			self.is_converged = True
+		else:
+			self.is_converged = False
+		return error

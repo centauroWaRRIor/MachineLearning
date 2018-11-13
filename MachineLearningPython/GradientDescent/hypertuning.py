@@ -34,9 +34,8 @@ def test_feature_type_2_data(data_stream):
 
 def main():
 	parser = argparse.ArgumentParser()
-	parser.add_argument('training_set_size', help="Size of training set.")
-	parser.add_argument('number_epochs', help="Number of epochs.")
-	parser.add_argument('learning_rate', help="Learning rate.")
+	parser.add_argument('regularization', help="Add L2 regularization? [True/False]")
+	parser.add_argument('feature_type', help="784 features vs 196 [type1/type2].")
 	parser.add_argument('data_path', help="Path to data folder.")
 	argv = sys.argv[1:]
 	args = parser.parse_args(argv)
@@ -56,8 +55,8 @@ def main():
 	test_data_stream = MNIST_Datastream(images_filename_path, labels_filename_path)
 
 	#test_feature_type_2_data(training_data_stream)
-	data_type = "type2"
-	num_features = 28 * 28 + 1 # 785
+	args.feature_type = "type2"
+	num_features = 0
 	
 	# collect train data in a random order
 	inputs_vector_train = []
@@ -67,10 +66,10 @@ def main():
 		random_indices.append(i)
 	random.shuffle(random_indices)
 	for i in random_indices:
-		if data_type == "type1":
+		if args.feature_type == "type1":
 			num_features = 28 * 28 + 1 # 785
 			feature_inputs = training_data_stream.get_scaled_1d_image_feature_type_1(i)
-		elif data_type == "type2":
+		elif args.feature_type == "type2":
 			num_features = 14 * 14 + 1 # 785
 			feature_inputs = training_data_stream.get_scaled_1d_image_feature_type_2(i)
 		# augment the inputs with the bias term
@@ -82,10 +81,10 @@ def main():
 	inputs_vector_test = []
 	ground_truth_labels_test = []
 	for i in range(test_data_stream.num_images):
-		if data_type == "type1":
+		if args.feature_type == "type1":
 			num_features = 28 * 28 + 1 # 785
 			feature_inputs = test_data_stream.get_scaled_1d_image_feature_type_1(i)
-		elif data_type == "type2":
+		elif args.feature_type == "type2":
 			num_features = 14 * 14 + 1 # 785
 			feature_inputs = test_data_stream.get_scaled_1d_image_feature_type_2(i)
 		# augment the inputs with the bias term
@@ -93,11 +92,14 @@ def main():
 		inputs_vector_test.append(feature_inputs)
 		ground_truth_labels_test.append(test_data_stream.get_label(i))
 
-	#gd_classifier = Digit_Classifier("Stochastic", num_features)
-	gd_classifier = Digit_Classifier("Batch", num_features)
-	gd_classifier.run_until_convergence(float(args.learning_rate), 0.0,
-		inputs_vector_train, ground_truth_labels_train, 
-		inputs_vector_test, ground_truth_labels_test)
+	gd_classifier = Digit_Classifier("Stochastic", num_features)
+	#gd_classifier = Digit_Classifier("Batch", num_features)
+	if args.regularization == "True":
+		l2_lambda = 0.5 # Found through hyper tuning
+	if args.regularization == "False":
+		l2_lambda = 0.0 # Found through hyper tuning
+	learning_rate = 0.03 # Found through hyper tuning
+	gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
 
 	return 0
 

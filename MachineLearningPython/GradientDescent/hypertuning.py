@@ -46,13 +46,16 @@ def temp_holder():
 
 def test_feature_type_2_data(data_stream):
 	"""Sanity check to visually inspect my feature type 2 conversion is correct"""
-	image = data_stream.get_image(1000)
+	image = data_stream.get_image_feature_type_1(1000)
 	data_stream.ascii_show(image)
 	print("                      ")
 	mini_image = data_stream.get_image_feature_type_2(1000)
 	data_stream.ascii_show(mini_image)
 	print("                      ")
-	image = data_stream.get_image(900)
+	mini_1d_image = data_stream.get_scaled_1d_image_feature_type_2(1000)
+	print mini_1d_image
+	print("                      ")
+	image = data_stream.get_image_feature_type_1(900)
 	data_stream.ascii_show(image)
 	print("                      ")
 	mini_image = data_stream.get_image_feature_type_2(900)

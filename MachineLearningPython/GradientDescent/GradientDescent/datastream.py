@@ -46,7 +46,7 @@ class MNIST_Datastream:
 		# returns python array
 		return label
 
-	def get_image(self, image_index):
+	def get_image_feature_type_1(self, image_index):
 
 		file_offset = 16 + image_index * self.image_bytes
 		self.images_file.seek(file_offset) # absolute offset
@@ -55,7 +55,7 @@ class MNIST_Datastream:
 		return image_numpy_array.tolist()
 
 
-	def get_1d_image(self, image_index):
+	def get_1d_image_feature_type_1(self, image_index):
 
 		file_offset = 16 + image_index * self.image_bytes
 		self.images_file.seek(file_offset) # absolute offset
@@ -64,7 +64,7 @@ class MNIST_Datastream:
 		return image_numpy_array.tolist()
 
 
-	def get_scaled_1d_image(self, image_index):
+	def get_scaled_1d_image_feature_type_1(self, image_index):
 
 		image = self.get_1d_image(image_index)
 		scaled_image_float = []
@@ -84,7 +84,7 @@ class MNIST_Datastream:
 				largest = bottom_right
 			return largest
 		
-		python_2d_array = self.get_image(image_index)
+		python_2d_array = self.get_image_feature_type_1(image_index)
 		square_window_size = 2
 		python_2d_array_feature_type_2 = []
 		for y in range(0, len(python_2d_array), square_window_size):
@@ -96,9 +96,17 @@ class MNIST_Datastream:
 				bottom_right = python_2d_array[y+1][x+1]
 				largest = get_largest_neighbor(upper_left, upper_right, botttom_left, bottom_right)
 				python_2d_array_feature_type_2[-1].append(largest)
-		
 		return python_2d_array_feature_type_2
 		
+	def get_scaled_1d_image_feature_type_2(self, image_index):
+
+		image = self.get_image_feature_type_2(image_index)
+		scaled_image_1d = []
+		for y in image:
+			for x in y:
+				scaled_image_1d.append(x/255.0)
+		return scaled_image_1d
+
 
 	def ascii_show(self, image):
 		for y in image:

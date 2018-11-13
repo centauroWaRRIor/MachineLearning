@@ -72,6 +72,33 @@ class MNIST_Datastream:
 			scaled_image_float.append(image[i]/255.0)
 		return scaled_image_float
 
+	def get_image_feature_type_2(self, image_index):
+	
+		def get_largest_neighbor(upper_left, upper_right, botttom_left, bottom_right):
+			largest = upper_left
+			if largest < upper_right:
+				largest = upper_right
+			if largest < botttom_left:
+				largest = botttom_left
+			if largest < bottom_right:
+				largest = bottom_right
+			return largest
+		
+		python_2d_array = self.get_image(image_index)
+		square_window_size = 2
+		python_2d_array_feature_type_2 = []
+		for y in range(0, len(python_2d_array), square_window_size):
+			python_2d_array_feature_type_2.append([])
+			for x in range(0, len(python_2d_array[0]), square_window_size):
+				upper_left =  python_2d_array[y][x]
+				upper_right = python_2d_array[y][x+1]
+				botttom_left = python_2d_array[y+1][x]
+				bottom_right = python_2d_array[y+1][x+1]
+				largest = get_largest_neighbor(upper_left, upper_right, botttom_left, bottom_right)
+				python_2d_array_feature_type_2[-1].append(largest)
+		
+		return python_2d_array_feature_type_2
+		
 
 	def ascii_show(self, image):
 		for y in image:

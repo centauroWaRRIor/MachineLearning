@@ -14,29 +14,7 @@ def uncompress_file(abs_path, compress_filename, uncompress_filename):
 			shutil.copyfileobj(f_in, f_out)
 
 
-def main():
-	parser = argparse.ArgumentParser()
-	parser.add_argument('training_set_size', help="Size of training set.")
-	parser.add_argument('number_epochs', help="Number of epochs.")
-	parser.add_argument('learning_rate', help="Learning rate.")
-	parser.add_argument('data_path', help="Path to data folder.")
-	argv = sys.argv[1:]
-	args = parser.parse_args(argv)
-
-	# extract gzip files
-	uncompress_file(args.data_path, "train-images-idx3-ubyte.gz", "train-images.idx3-ubyte")
-	uncompress_file(args.data_path, "train-labels-idx1-ubyte.gz", "train-labels.idx1-ubyte")
-	uncompress_file(args.data_path, "t10k-images-idx3-ubyte.gz", "t10k-images.idx3-ubyte")
-	uncompress_file(args.data_path, "t10k-labels-idx1-ubyte.gz", "t10k-labels.idx1-ubyte")
-	
-	images_filename_path = os.path.join(os.path.abspath(args.data_path), "train-images.idx3-ubyte")
-	labels_filename_path = os.path.join(os.path.abspath(args.data_path), "train-labels.idx1-ubyte")
-	training_data_stream = MNIST_Datastream(images_filename_path, labels_filename_path)
-
-	images_filename_path = os.path.join(os.path.abspath(args.data_path), "t10k-images.idx3-ubyte")
-	labels_filename_path = os.path.join(os.path.abspath(args.data_path), "t10k-labels.idx1-ubyte")
-	test_data_stream = MNIST_Datastream(images_filename_path, labels_filename_path)
-
+def temp_holder():
 	# collect train data in a random order
 	inputs_vector_train = []
 	ground_truth_labels_train = []
@@ -65,6 +43,46 @@ def main():
 	gd_classifier.run_until_convergence(float(args.learning_rate), 0.0,
 		inputs_vector_train, ground_truth_labels_train, 
 		inputs_vector_test, ground_truth_labels_test)
+
+def test_feature_type_2_data(data_stream):
+	"""Sanity check to visually inspect my feature type 2 conversion is correct"""
+	image = data_stream.get_image(1000)
+	data_stream.ascii_show(image)
+	print("                      ")
+	mini_image = data_stream.get_image_feature_type_2(1000)
+	data_stream.ascii_show(mini_image)
+	print("                      ")
+	image = data_stream.get_image(900)
+	data_stream.ascii_show(image)
+	print("                      ")
+	mini_image = data_stream.get_image_feature_type_2(900)
+	data_stream.ascii_show(mini_image)
+
+
+def main():
+	parser = argparse.ArgumentParser()
+	parser.add_argument('training_set_size', help="Size of training set.")
+	parser.add_argument('number_epochs', help="Number of epochs.")
+	parser.add_argument('learning_rate', help="Learning rate.")
+	parser.add_argument('data_path', help="Path to data folder.")
+	argv = sys.argv[1:]
+	args = parser.parse_args(argv)
+
+	# extract gzip files
+	uncompress_file(args.data_path, "train-images-idx3-ubyte.gz", "train-images.idx3-ubyte")
+	uncompress_file(args.data_path, "train-labels-idx1-ubyte.gz", "train-labels.idx1-ubyte")
+	uncompress_file(args.data_path, "t10k-images-idx3-ubyte.gz", "t10k-images.idx3-ubyte")
+	uncompress_file(args.data_path, "t10k-labels-idx1-ubyte.gz", "t10k-labels.idx1-ubyte")
+	
+	images_filename_path = os.path.join(os.path.abspath(args.data_path), "train-images.idx3-ubyte")
+	labels_filename_path = os.path.join(os.path.abspath(args.data_path), "train-labels.idx1-ubyte")
+	training_data_stream = MNIST_Datastream(images_filename_path, labels_filename_path)
+
+	images_filename_path = os.path.join(os.path.abspath(args.data_path), "t10k-images.idx3-ubyte")
+	labels_filename_path = os.path.join(os.path.abspath(args.data_path), "t10k-labels.idx1-ubyte")
+	test_data_stream = MNIST_Datastream(images_filename_path, labels_filename_path)
+
+	test_feature_type_2_data(training_data_stream)
 
 	return 0
 

@@ -35,7 +35,6 @@ class Digit_Classifier:
 		# the training set is assumed to be randomized at this point
 		epoch_number = 0
 		while not self.is_converged():
-		#while True:
 			classifier_index = 0
 			average_loss = 0.0
 			# train and test all digit classifiers

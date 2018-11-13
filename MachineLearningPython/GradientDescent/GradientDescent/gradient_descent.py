@@ -6,8 +6,8 @@ class Batch_Gradient_Descent:
 	The 784 inputs come directly from MNIST hand written images once the vector
 	has been flattened"""
 	
-	def __init__(self, predict_label, init_random_weights):
-		self.num_features = 785
+	def __init__(self, predict_label, init_random_weights, num_features):
+		self.num_features = num_features
 		self.weights = []
 		self.delta_weights = []
 		self.predict_label = predict_label # this is the handwritten digit this classifier is going to learn to predict
@@ -122,8 +122,8 @@ class Batch_Gradient_Descent:
 class Stochastic_Gradient_Descent(Batch_Gradient_Descent):
 	""" Stochastic version of Gradient Descent"""
 
-	def __init__(self, predict_label, init_random_weights):
-		Batch_Gradient_Descent.__init__(self, predict_label, init_random_weights)
+	def __init__(self, predict_label, init_random_weights, num_features):
+		Batch_Gradient_Descent.__init__(self, predict_label, init_random_weights, num_features)
 
 	def train_weights_one_epoch(self, example, ground_truth_label, l_rate, lambda_value):
 

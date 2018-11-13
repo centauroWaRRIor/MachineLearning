@@ -5,19 +5,18 @@ from gradient_descent import Stochastic_Gradient_Descent
 class Digit_Classifier:
 	"""10 GD classifiers, each one trained to recognize one digit"""
 		
-	def __init__(self, learning_environment):
+	def __init__(self, learning_environment, num_features):
 		self.scorer = Classifier_Score()
 		self.classifiers = []
 		self.learning_environment = learning_environment
 		self.stochastic_example_index = 0
 		for i in range(10):
 			if learning_environment == "Batch":
-				self.classifiers.append(Batch_Gradient_Descent(i, True))
+				self.classifiers.append(Batch_Gradient_Descent(i, True, num_features))
 			elif learning_environment == "Stochastic":
-				self.classifiers.append(Stochastic_Gradient_Descent(i, True))
+				self.classifiers.append(Stochastic_Gradient_Descent(i, True, num_features))
 			else:
 				raise ValueError('A bad parameter was passed to Digit Classifier constructor')
-		#self.classifiers.append(Batch_Gradient_Descent(5, True))
 
 	def is_converged(self):
 		# my convergence rule is the following: all the classifiers need to converge

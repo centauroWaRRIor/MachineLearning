@@ -66,7 +66,7 @@ class MNIST_Datastream:
 
 	def get_scaled_1d_image_feature_type_1(self, image_index):
 
-		image = self.get_1d_image(image_index)
+		image = self.get_1d_image_feature_type_1(image_index)
 		scaled_image_float = []
 		for i in range(self.num_rows * self.num_columns):
 			scaled_image_float.append(image[i]/255.0)

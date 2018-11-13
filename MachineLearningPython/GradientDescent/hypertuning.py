@@ -14,36 +14,6 @@ def uncompress_file(abs_path, compress_filename, uncompress_filename):
 			shutil.copyfileobj(f_in, f_out)
 
 
-def temp_holder():
-	# collect train data in a random order
-	inputs_vector_train = []
-	ground_truth_labels_train = []
-	random_indices = []
-	for i in range(10000):
-		random_indices.append(i)
-	random.shuffle(random_indices)
-	for i in random_indices:
-		feature_inputs = training_data_stream.get_scaled_1d_image(i)
-		# augment the inputs with the bias term
-		feature_inputs.append(1)
-		inputs_vector_train.append(feature_inputs)
-		ground_truth_labels_train.append(training_data_stream.get_label(i))
-	
-	# collect test data
-	inputs_vector_test = []
-	ground_truth_labels_test = []
-	for i in range(test_data_stream.num_images):
-		feature_inputs = test_data_stream.get_scaled_1d_image(i)
-		# augment the inputs with the bias term
-		feature_inputs.append(1)
-		inputs_vector_test.append(feature_inputs)
-		ground_truth_labels_test.append(test_data_stream.get_label(i))
-
-	gd_classifier = Digit_Classifier("Stochastic")
-	gd_classifier.run_until_convergence(float(args.learning_rate), 0.0,
-		inputs_vector_train, ground_truth_labels_train, 
-		inputs_vector_test, ground_truth_labels_test)
-
 def test_feature_type_2_data(data_stream):
 	"""Sanity check to visually inspect my feature type 2 conversion is correct"""
 	image = data_stream.get_image_feature_type_1(1000)
@@ -85,7 +55,49 @@ def main():
 	labels_filename_path = os.path.join(os.path.abspath(args.data_path), "t10k-labels.idx1-ubyte")
 	test_data_stream = MNIST_Datastream(images_filename_path, labels_filename_path)
 
-	test_feature_type_2_data(training_data_stream)
+	#test_feature_type_2_data(training_data_stream)
+	data_type = "type2"
+	num_features = 28 * 28 + 1 # 785
+	
+	# collect train data in a random order
+	inputs_vector_train = []
+	ground_truth_labels_train = []
+	random_indices = []
+	for i in range(10000):
+		random_indices.append(i)
+	random.shuffle(random_indices)
+	for i in random_indices:
+		if data_type == "type1":
+			num_features = 28 * 28 + 1 # 785
+			feature_inputs = training_data_stream.get_scaled_1d_image_feature_type_1(i)
+		elif data_type == "type2":
+			num_features = 14 * 14 + 1 # 785
+			feature_inputs = training_data_stream.get_scaled_1d_image_feature_type_2(i)
+		# augment the inputs with the bias term
+		feature_inputs.append(1)
+		inputs_vector_train.append(feature_inputs)
+		ground_truth_labels_train.append(training_data_stream.get_label(i))
+	
+	# collect test data
+	inputs_vector_test = []
+	ground_truth_labels_test = []
+	for i in range(test_data_stream.num_images):
+		if data_type == "type1":
+			num_features = 28 * 28 + 1 # 785
+			feature_inputs = test_data_stream.get_scaled_1d_image_feature_type_1(i)
+		elif data_type == "type2":
+			num_features = 14 * 14 + 1 # 785
+			feature_inputs = test_data_stream.get_scaled_1d_image_feature_type_2(i)
+		# augment the inputs with the bias term
+		feature_inputs.append(1)
+		inputs_vector_test.append(feature_inputs)
+		ground_truth_labels_test.append(test_data_stream.get_label(i))
+
+	#gd_classifier = Digit_Classifier("Stochastic", num_features)
+	gd_classifier = Digit_Classifier("Batch", num_features)
+	gd_classifier.run_until_convergence(float(args.learning_rate), 0.0,
+		inputs_vector_train, ground_truth_labels_train, 
+		inputs_vector_test, ground_truth_labels_test)
 
 	return 0
 

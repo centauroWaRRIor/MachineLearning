@@ -100,6 +100,8 @@ def main():
 		l2_lambda = 0.0 # Found through hyper tuning
 	learning_rate = 0.03 # Found through hyper tuning
 	gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	gd_classifier.plot_train_vs_test_performance()
+	
 
 	return 0
 

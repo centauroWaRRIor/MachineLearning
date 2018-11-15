@@ -1,6 +1,8 @@
 from score import Classifier_Score
 from gradient_descent import Batch_Gradient_Descent
 from gradient_descent import Stochastic_Gradient_Descent
+import numpy
+import matplotlib.pyplot as plt
 
 class Digit_Classifier:
 	"""10 GD classifiers, each one trained to recognize one digit"""
@@ -10,6 +12,9 @@ class Digit_Classifier:
 		self.classifiers = []
 		self.learning_environment = learning_environment
 		self.stochastic_example_index = 0
+		self.training_accuracy_history = []
+		self.test_accuracy_history = []
+		self.epoch_history = []
 		for i in range(10):
 			if learning_environment == "Batch":
 				self.classifiers.append(Batch_Gradient_Descent(i, True, num_features))
@@ -33,7 +38,8 @@ class Digit_Classifier:
 
 		# the training set is assumed to be randomized at this point
 		epoch_number = 0
-		while not self.is_converged():
+		#while not self.is_converged():
+		while epoch_number < 20:
 			classifier_index = 0
 			average_loss = 0.0
 			# train and test all digit classifiers
@@ -53,6 +59,9 @@ class Digit_Classifier:
 			print "epoch: %d Training Loss: %0.2f, Training Accuracy: %0.2f, Test Accuracy: %0.2f" % \
 				(epoch_number, average_loss, training_accuracy, test_accuracy)
 			print "============================================================================="
+			self.training_accuracy_history.append(training_accuracy)
+			self.test_accuracy_history.append(test_accuracy)
+			self.epoch_history.append(epoch_number)
 			epoch_number += 1
 
 
@@ -102,3 +111,25 @@ class Digit_Classifier:
 			self.scorer.record_result(label, prediction)
 			#print "predicted %d vs truth %d" % (prediction, binary_label) 
 		return self.scorer.get_accuracy()
+
+	def plot_train_vs_test_performance(self):
+
+		xlabel = "No Epochs"
+		ylabel = "Accuracy"
+		title = "Convergence Plot"
+		plt.figure()
+		s = numpy.array(self.epoch_history)
+		# plot training data
+		t = numpy.array(self.training_accuracy_history)
+		plt.plot(s, t, label="Training")
+		# plot test data
+		t = numpy.array(self.test_accuracy_history)
+		plt.plot(s, t, label="Test")
+		plt.legend()
+	
+		plt.xlabel(xlabel)
+		plt.ylabel(ylabel)
+		plt.title(title)
+		plt.grid(True)
+		plt.savefig("convergence.png")
+		#plt.show()

@@ -25,6 +25,8 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="gd.py" />
+    <Compile Include="sgd.py" />
     <Compile Include="hypertuning.py" />
     <Compile Include="GradientDescent\datastream.py" />
     <Compile Include="GradientDescent\digit_classifier.py" />

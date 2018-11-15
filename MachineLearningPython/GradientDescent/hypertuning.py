@@ -54,8 +54,6 @@ def main():
 	labels_filename_path = os.path.join(os.path.abspath(args.data_path), "t10k-labels.idx1-ubyte")
 	test_data_stream = MNIST_Datastream(images_filename_path, labels_filename_path)
 
-	#test_feature_type_2_data(training_data_stream)
-	args.feature_type = "type2"
 	num_features = 0
 	
 	# collect train data in a random order
@@ -92,16 +90,57 @@ def main():
 		inputs_vector_test.append(feature_inputs)
 		ground_truth_labels_test.append(test_data_stream.get_label(i))
 
-	gd_classifier = Digit_Classifier("Stochastic", num_features)
+	#gd_classifier = Digit_Classifier("Stochastic", num_features)
 	#gd_classifier = Digit_Classifier("Batch", num_features)
-	if args.regularization == "True":
-		l2_lambda = 0.5 # Found through hyper tuning
-	if args.regularization == "False":
-		l2_lambda = 0.0 # Found through hyper tuning
-	learning_rate = 0.03 # Found through hyper tuning
-	gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
-	gd_classifier.plot_train_vs_test_performance()
+	#if args.regularization == "True":
+	#	l2_lambda = 0.5 # Found through hyper tuning
+	#if args.regularization == "False":
+	#	l2_lambda = 0.0 # Found through hyper tuning
+	#learning_rate = 0.03 # Found through hyper tuning
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("convergence.png")
 	
+	#gd_classifier = Digit_Classifier("Batch", num_features)
+	#l2_lambda = 0.0
+	#learning_rate = 0.001 # Found through hyper tuning
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("hypertuning_l_rate_001.png")
+
+	#gd_classifier = Digit_Classifier("Batch", num_features)
+	#l2_lambda = 0.0
+	#learning_rate = 0.01 # Found through hyper tuning
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("hypertuning_l_rate_01.png")
+
+	#gd_classifier = Digit_Classifier("Batch", num_features)
+	#l2_lambda = 0.0
+	#learning_rate = 0.1 # Found through hyper tuning
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("hypertuning_l_rate_1.png")
+
+	#gd_classifier = Digit_Classifier("Batch", num_features)
+	#l2_lambda = 0.0
+	#learning_rate = 1.0 # Found through hyper tuning
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("hypertuning_l_rate_10.png")
+
+	#gd_classifier = Digit_Classifier("Batch", num_features)
+	#l2_lambda = 0.0
+	#learning_rate = 0.5 # Found through hyper tuning
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("hypertuning_l_rate_5.png")
+
+	#gd_classifier = Digit_Classifier("Batch", num_features)
+	#l2_lambda = 0.0
+	#learning_rate = 1.0 # Found through hyper tuning
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("hypertuning_type1_l_rate_10.png")
+
+	gd_classifier = Digit_Classifier("Batch", num_features)
+	l2_lambda = 0.0
+	learning_rate = 0.03
+	gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	gd_classifier.plot_train_vs_test_performance("hypertuning_type1_l_rate_03.png")
 
 	return 0
 

@@ -38,8 +38,7 @@ class Digit_Classifier:
 
 		# the training set is assumed to be randomized at this point
 		epoch_number = 0
-		#while not self.is_converged():
-		while epoch_number < 20:
+		while not self.is_converged():
 			classifier_index = 0
 			average_loss = 0.0
 			# train and test all digit classifiers
@@ -112,7 +111,7 @@ class Digit_Classifier:
 			#print "predicted %d vs truth %d" % (prediction, binary_label) 
 		return self.scorer.get_accuracy()
 
-	def plot_train_vs_test_performance(self):
+	def plot_train_vs_test_performance(self, filename):
 
 		xlabel = "No Epochs"
 		ylabel = "Accuracy"
@@ -131,5 +130,5 @@ class Digit_Classifier:
 		plt.ylabel(ylabel)
 		plt.title(title)
 		plt.grid(True)
-		plt.savefig("convergence.png")
+		plt.savefig(filename)
 		#plt.show()

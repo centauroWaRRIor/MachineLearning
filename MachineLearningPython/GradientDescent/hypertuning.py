@@ -169,29 +169,37 @@ def main():
 	
 	########################## SGD hypertuning ######################################
 
-	gd_classifier = Digit_Classifier("Stochastic", num_features)
-	l2_lambda = 0.0
-	learning_rate = 0.001 # Found through hyper tuning
-	gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
-	gd_classifier.plot_train_vs_test_performance("stochastic_hypertuning_l_rate_001.png")
+	#gd_classifier = Digit_Classifier("Stochastic", num_features) 
+	#l2_lambda = 0.0
+	#learning_rate = 0.001 # crashes
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("stochastic_hypertuning_l_rate_001.png")
 
+	#gd_classifier = Digit_Classifier("Stochastic", num_features)
+	#l2_lambda = 0.0
+	#learning_rate = 0.01 # crashes at 998 epochs with around 0.80 accuracy
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("stochastic_hypertuning_l_rate_01.png")
+	
+	print "Continue SGD hyper tuning"
 	gd_classifier = Digit_Classifier("Stochastic", num_features)
 	l2_lambda = 0.0
-	learning_rate = 0.01 # Found through hyper tuning
-	gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
-	gd_classifier.plot_train_vs_test_performance("stochastic_hypertuning_l_rate_01.png")
-
-	gd_classifier = Digit_Classifier("Stochastic", num_features)
-	l2_lambda = 0.0
-	learning_rate = 0.1 # Found through hyper tuning
+	learning_rate = 0.05 # Found through hyper tuning
 	gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
 	gd_classifier.plot_train_vs_test_performance("stochastic_hypertuning_l_rate_1.png")
 
-	gd_classifier = Digit_Classifier("Stochastic", num_features)
-	l2_lambda = 0.0
-	learning_rate = 1.0 # Found through hyper tuning
-	gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
-	gd_classifier.plot_train_vs_test_performance("stochastic_hypertuning_l_rate_10.png")
+	#print "Continue SGD hyper tuning"
+	#gd_classifier = Digit_Classifier("Stochastic", num_features)
+	#l2_lambda = 0.0
+	#learning_rate = 0.1 # Found through hyper tuning
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("stochastic_hypertuning_l_rate_1.png")
+
+	#gd_classifier = Digit_Classifier("Stochastic", num_features)
+	#l2_lambda = 0.0
+	#learning_rate = 1.0 # Found through hyper tuning
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("stochastic_hypertuning_l_rate_10.png")
 
 	return 0
 

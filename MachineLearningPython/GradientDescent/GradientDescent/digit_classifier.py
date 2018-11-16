@@ -62,6 +62,11 @@ class Digit_Classifier:
 			self.test_accuracy_history.append(test_accuracy)
 			self.epoch_history.append(epoch_number)
 			epoch_number += 1
+			self.stochastic_example_index += 1
+			if self.stochastic_example_index > len(inputs_vector):
+				print "Exhausted number of training examples for stochastic gradient descent, resetting" # unlikely
+				self.stochastic_example_index = 0
+
 
 
 	def train_one_epoch(self, classifier_index, inputs_vector, ground_truth_labels, l_rate, lambda_value):
@@ -70,11 +75,7 @@ class Digit_Classifier:
 			self.classifiers[classifier_index].train_weights_one_epoch(inputs_vector, ground_truth_labels, l_rate, lambda_value)
 			error = self.classifiers[classifier_index].calc_error_one_epoch(inputs_vector, ground_truth_labels, l_rate, lambda_value)
 		elif self.learning_environment == "Stochastic":
-			if self.stochastic_example_index > len(inputs_vector):
-				print "Exhausted number of training examples for stochastic gradient descent, resetting"
-				stochastic_example_index = 0
 			self.classifiers[classifier_index].train_weights_one_epoch(inputs_vector[self.stochastic_example_index], ground_truth_labels[self.stochastic_example_index], l_rate, lambda_value)
-			self.stochastic_example_index += 1
 			error = self.classifiers[classifier_index].calc_error_one_epoch(inputs_vector[self.stochastic_example_index], ground_truth_labels[self.stochastic_example_index], l_rate, lambda_value)
 		return error
 

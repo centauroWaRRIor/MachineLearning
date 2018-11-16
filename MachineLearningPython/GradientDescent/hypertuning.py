@@ -136,11 +136,62 @@ def main():
 	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
 	#gd_classifier.plot_train_vs_test_performance("hypertuning_type1_l_rate_10.png")
 
-	gd_classifier = Digit_Classifier("Batch", num_features)
+	# this showed that the behavior between type 1 and type 2 does not change with the l_rate
+	#gd_classifier = Digit_Classifier("Batch", num_features)
+	#l2_lambda = 0.0
+	#learning_rate = 0.03
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("hypertuning_type1_l_rate_03.png")
+
+	#gd_classifier = Digit_Classifier("Batch", num_features)
+	#l2_lambda = 0.25
+	#learning_rate = 1.0 # Found through hyper tuning
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("hypertuning_l_rate_10_l2_lambda_25.png")
+
+	#gd_classifier = Digit_Classifier("Batch", num_features)
+	#l2_lambda = 0.50
+	#learning_rate = 1.0 # Found through hyper tuning
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("hypertuning_l_rate_10_l2_lambda_50.png")
+
+	#gd_classifier = Digit_Classifier("Batch", num_features)
+	#l2_lambda = 0.75
+	#learning_rate = 1.0 # Found through hyper tuning
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("hypertuning_l_rate_10_l2_lambda_75.png")
+
+	#gd_classifier = Digit_Classifier("Batch", num_features)
+	#l2_lambda = 1.0
+	#learning_rate = 1.0 # Found through hyper tuning
+	#gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	#gd_classifier.plot_train_vs_test_performance("hypertuning_l_rate_10_l2_lambda_100.png")
+	
+	########################## SGD hypertuning ######################################
+
+	gd_classifier = Digit_Classifier("Stochastic", num_features)
 	l2_lambda = 0.0
-	learning_rate = 0.03
+	learning_rate = 0.001 # Found through hyper tuning
 	gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
-	gd_classifier.plot_train_vs_test_performance("hypertuning_type1_l_rate_03.png")
+	gd_classifier.plot_train_vs_test_performance("stochastic_hypertuning_l_rate_001.png")
+
+	gd_classifier = Digit_Classifier("Stochastic", num_features)
+	l2_lambda = 0.0
+	learning_rate = 0.01 # Found through hyper tuning
+	gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	gd_classifier.plot_train_vs_test_performance("stochastic_hypertuning_l_rate_01.png")
+
+	gd_classifier = Digit_Classifier("Stochastic", num_features)
+	l2_lambda = 0.0
+	learning_rate = 0.1 # Found through hyper tuning
+	gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	gd_classifier.plot_train_vs_test_performance("stochastic_hypertuning_l_rate_1.png")
+
+	gd_classifier = Digit_Classifier("Stochastic", num_features)
+	l2_lambda = 0.0
+	learning_rate = 1.0 # Found through hyper tuning
+	gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
+	gd_classifier.plot_train_vs_test_performance("stochastic_hypertuning_l_rate_10.png")
 
 	return 0
 

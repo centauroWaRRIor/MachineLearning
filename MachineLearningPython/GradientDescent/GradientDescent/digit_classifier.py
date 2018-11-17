@@ -54,16 +54,14 @@ class Digit_Classifier:
 			average_loss /= len(self.classifiers)
 			training_accuracy = self.evaluate_system_accuracy_one_epoch(inputs_vector_train, ground_truth_labels_train)
 			test_accuracy = self.evaluate_system_accuracy_one_epoch(inputs_vector_test, ground_truth_labels_test)
-			print "============================================================================="
 			print "epoch: %d Training Loss: %0.2f, Training Accuracy: %0.2f, Test Accuracy: %0.2f" % \
 				(epoch_number, average_loss, training_accuracy, test_accuracy)
-			print "============================================================================="
 			self.training_accuracy_history.append(training_accuracy)
 			self.test_accuracy_history.append(test_accuracy)
 			self.epoch_history.append(epoch_number)
 			epoch_number += 1
 			self.stochastic_example_index += 1
-			if self.stochastic_example_index > len(inputs_vector):
+			if self.stochastic_example_index > len(inputs_vector_train):
 				print "Exhausted number of training examples for stochastic gradient descent, resetting" # unlikely
 				self.stochastic_example_index = 0
 

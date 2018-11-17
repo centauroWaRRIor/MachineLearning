@@ -50,7 +50,7 @@ def main():
 			num_features = 28 * 28 + 1 # 785
 			feature_inputs = training_data_stream.get_scaled_1d_image_feature_type_1(i)
 		elif args.feature_type == "type2":
-			num_features = 14 * 14 + 1 # 785
+			num_features = 14 * 14 + 1 # 197
 			feature_inputs = training_data_stream.get_scaled_1d_image_feature_type_2(i)
 		# augment the inputs with the bias term
 		feature_inputs.append(1)
@@ -65,7 +65,7 @@ def main():
 			num_features = 28 * 28 + 1 # 785
 			feature_inputs = test_data_stream.get_scaled_1d_image_feature_type_1(i)
 		elif args.feature_type == "type2":
-			num_features = 14 * 14 + 1 # 785
+			num_features = 14 * 14 + 1 # 197
 			feature_inputs = test_data_stream.get_scaled_1d_image_feature_type_2(i)
 		# augment the inputs with the bias term
 		feature_inputs.append(1)
@@ -76,7 +76,7 @@ def main():
 	if args.regularization == "True":
 		l2_lambda = 0.5 # Found through hyper tuning
 	if args.regularization == "False":
-		l2_lambda = 0.0 # Found through hyper tuning
+		l2_lambda = 0.0
 	learning_rate = 0.03 # Found through hyper tuning
 	gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
 	gd_classifier.plot_train_vs_test_performance("convergence.png")

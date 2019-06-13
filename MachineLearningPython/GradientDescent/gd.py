@@ -79,7 +79,7 @@ def main():
 		l2_lambda = 0.0
 	learning_rate = 1.0 # Found through hyper tuning
 	gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
-	gd_classifier.plot_train_vs_test_performance("gd_convergence_type1_noreg.png")
+	gd_classifier.plot_train_vs_test_performance("convergence.png")
 	return 0
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>90d942f1-b8fa-4fea-a232-6941198102a2</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>hypertuning.py</StartupFile>
+    <StartupFile>sgd.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

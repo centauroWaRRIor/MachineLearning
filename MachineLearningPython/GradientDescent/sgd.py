@@ -74,10 +74,10 @@ def main():
 
 	gd_classifier = Digit_Classifier("Stochastic", num_features)
 	if args.regularization == "True":
-		l2_lambda = 0.5 # Found through hyper tuning
+		l2_lambda = 0.0 # Disabling regularization feature due to bug, see report
 	if args.regularization == "False":
 		l2_lambda = 0.0
-	learning_rate = 0.03 # Found through hyper tuning
+	learning_rate = 0.05 # Found through hyper tuning, for type 1 data the performance is not great, see report
 	gd_classifier.run_until_convergence(learning_rate, l2_lambda, inputs_vector_train, ground_truth_labels_train, inputs_vector_test, ground_truth_labels_test)
 	gd_classifier.plot_train_vs_test_performance("convergence.png")
 	
@@ -85,5 +85,5 @@ def main():
 	return 0
 
 if __name__ == "__main__":
-	#sys.exit(int(main() or 0)) # use for when running without debugging
-	main() # use for when debugging within Visual Studio
+	sys.exit(int(main() or 0)) # use for when running without debugging
+	#main() # use for when debugging within Visual Studio
